@@ -20,20 +20,23 @@ struct PackageManager {
 /*********
 * Functions
 *********/
-struct PackageManager defineApt() {
+struct PackageManager defineApt(char targetPackage[]) {
     struct PackageManager apt;
     strcpy( apt.name, "apt");
 
     struct PackageManagerCommand searchCommand;
-    strcpy(searchCommand.args, "search emacs");
+    char command[50] = "search ";
+    strcat(command, targetPackage);
+    strcpy(searchCommand.args, command);
     apt.searchCommand = searchCommand;
 
     return apt;
 }
 
 int main() {
+    char targetPackage[] = "emacs";
     struct PackageManager managers[] = {
-         defineApt()
+         defineApt(targetPackage)
     };
 
     for (int i = 0; i < SIZEOF(managers); i++) {
