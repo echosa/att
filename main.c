@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define SIZEOF(x)  (sizeof(x) / sizeof((x)[0]))
@@ -48,7 +49,7 @@ int main(int argc, char *argv[]) {
         printf("####################\n");
         printf("####################\n");
         printf("%s\n", managers[i].name);
-        printf("%s\n", managers[i].searchCommand.args);
+        system(managers[i].searchCommand.args);
         printf("####################\n" );
     }
 
