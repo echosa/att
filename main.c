@@ -21,7 +21,7 @@ struct PackageManager {
 /*********
 * Functions
 *********/
-struct PackageManagerCommand definePackageManagerCommand(char name[10], char commandArgs[50], bool requiresRoot) {
+struct PackageManagerCommand definePackageManagerCommand(char *name, char *commandArgs, bool requiresRoot) {
     struct PackageManagerCommand command;
     sprintf(command.args, "%s %s", name, commandArgs);
     command.requiresRoot = requiresRoot;
@@ -29,7 +29,7 @@ struct PackageManagerCommand definePackageManagerCommand(char name[10], char com
     return command;
 }
 
-struct PackageManager definePackageManager(char name[10], struct PackageManagerCommand searchCommand) {
+struct PackageManager definePackageManager(char *name, struct PackageManagerCommand searchCommand) {
     struct PackageManager manager;
     strcpy( manager.name, name);
     manager.searchCommand = searchCommand;
@@ -38,20 +38,24 @@ struct PackageManager definePackageManager(char name[10], struct PackageManagerC
 }
 
 void runCommand(struct PackageManager manager, char *command) {
+    printf("####################\n");
+    printf("####################\n");
+    printf("%s\n", manager.name);
+
     if (strcmp(command, "search") == 0) {
         system(manager.searchCommand.args);
     } else {
         printf("Unrecognized command: %s\n", command);
     }
+    printf("####################\n" );
 }
-
 
 /*********
 * Package Managers
 *********/
-struct PackageManager defineAptPackageManager(char targetPackage[]) {
+struct PackageManager defineAptPackageManager(char *targetPackage) {
     // Name
-    char name[10] = "apt";
+    char name[] = "apt";
 
     // Search Command
     char searchCommandArgs[50];
@@ -72,16 +76,13 @@ int main(int argc, char *argv[]) {
 
     char *command = argv[1];
     char *targetPackage = argv[2];
+
     struct PackageManager managers[] = {
          defineAptPackageManager(targetPackage)
     };
 
     for (int i = 0; i < SIZEOF(managers); i++) {
-        printf("####################\n");
-        printf("####################\n");
-        printf("%s\n", managers[i].name);
         runCommand(managers[i], command);
-        printf("####################\n" );
     }
 
     return 0;
