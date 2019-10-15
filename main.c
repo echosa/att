@@ -20,17 +20,17 @@ struct PackageManager {
 /*********
 * Functions
 *********/
-struct PackageManager defineApt(char targetPackage[]) {
-    struct PackageManager apt;
-    strcpy( apt.name, "apt");
+struct PackageManager definePackageManager(char name[10], char targetPackage[]) {
+    struct PackageManager manager;
+    strcpy( manager.name, name);
 
     struct PackageManagerCommand searchCommand;
-    char command[50] = "search ";
-    strcat(command, targetPackage);
+    char command[50];
+    sprintf(command, "%s %s %s", manager.name, "search", targetPackage);
     strcpy(searchCommand.args, command);
-    apt.searchCommand = searchCommand;
+    manager.searchCommand = searchCommand;
 
-    return apt;
+    return manager;
 }
 
 int main(int argc, char *argv[]) {
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 
     char *targetPackage = argv[1];
     struct PackageManager managers[] = {
-         defineApt(targetPackage)
+         definePackageManager("apt", targetPackage)
     };
 
     for (int i = 0; i < SIZEOF(managers); i++) {
