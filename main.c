@@ -33,8 +33,13 @@ struct PackageManager defineApt(char targetPackage[]) {
     return apt;
 }
 
-int main() {
-    char targetPackage[] = "emacs";
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Please specify a package name.\n");
+        return 1;
+    }
+
+    char *targetPackage = argv[1];
     struct PackageManager managers[] = {
          defineApt(targetPackage)
     };
