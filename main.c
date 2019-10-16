@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define PRINT_INSTEAD_OF_RUN false
+#define DO_NOT_RUN true
 #define SIZEOF(x)  (sizeof(x) / sizeof((x)[0]))
 
 enum action { Clean, Search, Upgrade, Invalid };
@@ -50,9 +50,8 @@ void runCommand(struct PackageManager manager, enum action action) {
     if (strcmp(command, "") == 0) {
         printf("No relevant command for %s\n", manager.name);
     } else {
-        if (PRINT_INSTEAD_OF_RUN) {
-            printf("%s\n", command);
-        } else {
+        printf("%s\n", command);
+        if (!DO_NOT_RUN) {
             system(command);
         }
     }
@@ -60,9 +59,6 @@ void runCommand(struct PackageManager manager, enum action action) {
    printf("####################\n" );
 }
 
-/*********
-* Package Managers
-*********/
 struct PackageManager definePackageManager(
     char *name,
     char *cleanCommand,
@@ -78,7 +74,10 @@ struct PackageManager definePackageManager(
     return manager;
 }
 
-struct PackageManager defineAptPackageManager(char *targetPackage) {
+/*********
+* Package Managers
+*********/
+struct PackageManager apt(char *targetPackage) {
     char name[] = "apt";
     char cleanCommand[100];
     char searchCommand[100];
@@ -91,7 +90,7 @@ struct PackageManager defineAptPackageManager(char *targetPackage) {
     return definePackageManager(name, cleanCommand, searchCommand, upgradeCommand);
 }
 
-struct PackageManager defineFlatpakPackageManager(char *targetPackage) {
+struct PackageManager flatpak(char *targetPackage) {
     char name[] = "flatpak";
     char cleanCommand[100] = "";
     char searchCommand[100];
@@ -99,6 +98,19 @@ struct PackageManager defineFlatpakPackageManager(char *targetPackage) {
 
     sprintf(searchCommand, "%s search %s", name, targetPackage);
     sprintf(upgradeCommand, "%s upgrade", name);
+
+    return definePackageManager(name, cleanCommand, searchCommand, upgradeCommand);
+}
+
+struct PackageManager guix(char *targetPackage) {
+    char name[] = "guix";
+    char cleanCommand[100];
+    char searchCommand[100];
+    char upgradeCommand[100];
+
+    sprintf(cleanCommand, "%s package --delete-generations; %s gc --collect-garbage; %s gc --list-dead", name, name, name);
+    sprintf(searchCommand, "%s package -A %s", name, targetPackage);
+    sprintf(upgradeCommand, "%s pull; %s package -U", name, name);
 
     return definePackageManager(name, cleanCommand, searchCommand, upgradeCommand);
 }
@@ -125,8 +137,9 @@ int main(int argc, char *argv[]) {
     char *targetPackage = argv[2];
 
     struct PackageManager managers[] = {
-         defineAptPackageManager(targetPackage),
-         defineFlatpakPackageManager(targetPackage)
+         apt(targetPackage),
+         flatpak(targetPackage),
+         guix(targetPackage)
     };
 
     for (int i = 0; i < SIZEOF(managers); i++) {
