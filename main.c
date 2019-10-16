@@ -5,8 +5,12 @@
 
 #define DO_NOT_RUN true
 #define SIZEOF(x)  (sizeof(x) / sizeof((x)[0]))
+#define CLEAN_ACTION "clean"
+#define SEARCH_ACTION "search"
+#define SEARCH_EXACT_ACTION "exact"
+#define UPGRADE_ACTION "upgrade"
 
-enum action { Clean, Search, Upgrade, Invalid };
+enum action { Clean, Search, SearchExact, Upgrade, Invalid };
 
 /*********
 * Structs
@@ -15,6 +19,7 @@ struct PackageManager {
     char  name[10];
     char cleanCommand[100];
     char searchCommand[100];
+    char searchExactCommand[100];
     char upgradeCommand[100];
 };
 
@@ -22,11 +27,13 @@ struct PackageManager {
 * Functions
 *********/
 enum action parseAction(char* action) {
-    if (strcmp(action, "clean") == 0) {
+    if (strcmp(action, CLEAN_ACTION) == 0) {
         return Clean;
-    } else if (strcmp(action, "search") == 0) {
+    } else if (strcmp(action, SEARCH_ACTION) == 0) {
         return Search;
-    } else if (strcmp(action, "upgrade") == 0) {
+     } else if (strcmp(action, SEARCH_EXACT_ACTION) == 0) {
+        return SearchExact;
+    } else if (strcmp(action, UPGRADE_ACTION) == 0) {
         return Upgrade;
     } else {
         return Invalid;
@@ -43,6 +50,8 @@ void runCommand(struct PackageManager manager, enum action action) {
         command = manager.cleanCommand;
     } else if (action == Search) {
         command = manager.searchCommand;
+    } else if (action == SearchExact) {
+        command = manager.searchExactCommand;
     } else if (action == Upgrade) {
         command = manager.upgradeCommand;
     }
@@ -63,12 +72,14 @@ struct PackageManager definePackageManager(
     char *name,
     char *cleanCommand,
     char *searchCommand,
+    char *searchExactCommand,
     char *upgradeCommand
 ) {
     struct PackageManager manager;
     strcpy( manager.name, name);
     strcpy(manager.cleanCommand, cleanCommand);
     strcpy(manager.searchCommand, searchCommand);
+    strcpy(manager.searchExactCommand, searchExactCommand);
     strcpy(manager.upgradeCommand, upgradeCommand);
 
     return manager;
@@ -81,38 +92,44 @@ struct PackageManager apt(char *targetPackage) {
     char name[] = "apt";
     char cleanCommand[100];
     char searchCommand[100];
+    char searchExactCommand[100];
     char upgradeCommand[100];
 
     sprintf(cleanCommand, "sudo %s autoremove", name);
     sprintf(searchCommand, "%s search %s", name, targetPackage);
+    sprintf(searchExactCommand, "%s search ^%s$", name, targetPackage);
     sprintf(upgradeCommand, "sudo %s upgrade; sudo %s upgrade", name, name);
 
-    return definePackageManager(name, cleanCommand, searchCommand, upgradeCommand);
+    return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
 
 struct PackageManager flatpak(char *targetPackage) {
     char name[] = "flatpak";
     char cleanCommand[100] = "";
     char searchCommand[100];
+    char searchExactCommand[100];
     char upgradeCommand[100];
 
     sprintf(searchCommand, "%s search %s", name, targetPackage);
+    sprintf(searchExactCommand, "%s search %s", name, targetPackage);
     sprintf(upgradeCommand, "%s upgrade", name);
 
-    return definePackageManager(name, cleanCommand, searchCommand, upgradeCommand);
+    return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
 
 struct PackageManager guix(char *targetPackage) {
     char name[] = "guix";
     char cleanCommand[100];
     char searchCommand[100];
+    char searchExactCommand[100];
     char upgradeCommand[100];
 
     sprintf(cleanCommand, "%s package --delete-generations; %s gc --collect-garbage; %s gc --list-dead", name, name, name);
     sprintf(searchCommand, "%s package -A %s", name, targetPackage);
+    sprintf(searchExactCommand, "%s package -A ^%s$", name, targetPackage);
     sprintf(upgradeCommand, "%s pull; %s package -U", name, name);
 
-    return definePackageManager(name, cleanCommand, searchCommand, upgradeCommand);
+    return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
 
 /*********
@@ -129,8 +146,8 @@ int main(int argc, char *argv[]) {
         printf("Invalid action: %s\n", argv[1]);
 
         return 1;
-    } else if (action == Search && argc < 3) {
-        printf("Usage: %s <action> [package]\n", argv[0]);
+    } else if ((action == Search || action == SearchExact) && argc < 3) {
+        printf("Usage: %s <action> package\n", argv[0]);
         return 1;
     }
 
