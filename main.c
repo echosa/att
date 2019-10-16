@@ -4,6 +4,7 @@
 #include <string.h>
 
 #define DO_NOT_RUN false
+#define NAME_LENGTH 10
 #define COMMAND_LENGTH 100
 #define SIZEOF(x)  (sizeof(x) / sizeof((x)[0]))
 #define CLEAN_ACTION "clean"
@@ -17,7 +18,7 @@ enum action { Clean, Search, SearchExact, Upgrade, Invalid };
 * Structs
 *********/
 struct PackageManager {
-	char  name[10];
+	char  name[NAME_LENGTH];
 	char cleanCommand[COMMAND_LENGTH];
 	char searchCommand[COMMAND_LENGTH];
 	char searchExactCommand[COMMAND_LENGTH];
@@ -77,11 +78,11 @@ struct PackageManager definePackageManager(
 	char *upgradeCommand
 ) {
 	struct PackageManager manager;
-	strcpy(manager.name, name);
-	strcpy(manager.cleanCommand, cleanCommand);
-	strcpy(manager.searchCommand, searchCommand);
-	strcpy(manager.searchExactCommand, searchExactCommand);
-	strcpy(manager.upgradeCommand, upgradeCommand);
+	strncpy(manager.name, name, NAME_LENGTH);
+	strncpy(manager.cleanCommand, cleanCommand, COMMAND_LENGTH);
+	strncpy(manager.searchCommand, searchCommand, COMMAND_LENGTH);
+	strncpy(manager.searchExactCommand, searchExactCommand, COMMAND_LENGTH);
+	strncpy(manager.upgradeCommand, upgradeCommand, COMMAND_LENGTH);
 
 	return manager;
 }
