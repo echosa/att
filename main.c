@@ -4,35 +4,25 @@
 #include <string.h>
 
 #define SIZEOF(x)  (sizeof(x) / sizeof((x)[0]))
+#define PRINT_INSTEAD_OF_RUN true
 
 /*********
 * Structs
 *********/
-struct PackageManagerCommand {
-    char args[100];
-    bool requiresRoot;
-};
-
 struct PackageManager {
     char  name[10];
-    struct PackageManagerCommand searchCommand;
+    char searchCommand[200];
+    char updateCommand[200];
 };
 
 /*********
 * Functions
 *********/
-struct PackageManagerCommand definePackageManagerCommand(char *name, char *commandArgs, bool requiresRoot) {
-    struct PackageManagerCommand command;
-    sprintf(command.args, "%s %s", name, commandArgs);
-    command.requiresRoot = requiresRoot;
-
-    return command;
-}
-
-struct PackageManager definePackageManager(char *name, struct PackageManagerCommand searchCommand) {
+struct PackageManager definePackageManager(char *name, char *searchCommand, char *updateCommand) {
     struct PackageManager manager;
     strcpy( manager.name, name);
-    manager.searchCommand = searchCommand;
+    strcpy(manager.searchCommand, searchCommand);
+    strcpy(manager.updateCommand, updateCommand);
 
     return manager;
 }
@@ -43,7 +33,17 @@ void runCommand(struct PackageManager manager, char *command) {
     printf("%s\n", manager.name);
 
     if (strcmp(command, "search") == 0) {
-        system(manager.searchCommand.args);
+        if (PRINT_INSTEAD_OF_RUN) {
+            printf("%s\n", manager.searchCommand);
+        } else {
+            system(manager.searchCommand);
+        }
+    } else if (strcmp(command, "update") == 0) {
+        if (PRINT_INSTEAD_OF_RUN) {
+            printf("%s\n", manager.updateCommand);
+        } else {
+            system(manager.updateCommand);
+        }
     } else {
         printf("Unrecognized command: %s\n", command);
     }
@@ -54,35 +54,33 @@ void runCommand(struct PackageManager manager, char *command) {
 * Package Managers
 *********/
 struct PackageManager defineAptPackageManager(char *targetPackage) {
-    // Name
     char name[] = "apt";
+    char searchCommand[100];
+    char updateCommand[100];
 
-    // Search Command
-    char searchCommandArgs[100];
-    sprintf(searchCommandArgs, "search %s", targetPackage);
-    struct PackageManagerCommand searchCommand = definePackageManagerCommand(name, searchCommandArgs, false);
+    sprintf(searchCommand, "%s search %s", name, targetPackage);
+    sprintf(updateCommand, "sudo %s update; sudo %s upgrade", name, name);
 
-    return definePackageManager(name, searchCommand);;
+    return definePackageManager(name, searchCommand, updateCommand);
 }
 
 struct PackageManager defineFlatpakPackageManager(char *targetPackage) {
-    // Name
     char name[] = "flatpak";
+    char searchCommand[100];
+    char updateCommand[100];
 
-    // Search Command
-    char searchCommandArgs[100];
-    sprintf(searchCommandArgs, "search %s", targetPackage);
-    struct PackageManagerCommand searchCommand = definePackageManagerCommand(name, searchCommandArgs, false);
+    sprintf(searchCommand, "%s search %s", name, targetPackage);
+    sprintf(updateCommand, "%s update", name);
 
-    return definePackageManager(name, searchCommand);;
+    return definePackageManager(name, searchCommand, updateCommand);
 }
 
 /*********
 * Main
 *********/
 int main(int argc, char *argv[]) {
-    if (argc < 3) {
-        printf("Usage: %s <command> <package>\n", argv[0]);
+    if (argc < 1) {
+        printf("Usage: %s <command> [package]\n", argv[0]);
         return 1;
     }
 
