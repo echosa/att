@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define PRINT_INSTEAD_OF_RUN true
+#define PRINT_INSTEAD_OF_RUN false
 #define SIZEOF(x)  (sizeof(x) / sizeof((x)[0]))
 
 enum action { Clean, Search, Upgrade, Invalid };
@@ -47,10 +47,14 @@ void runCommand(struct PackageManager manager, enum action action) {
         command = manager.upgradeCommand;
     }
 
-    if (PRINT_INSTEAD_OF_RUN) {
-        printf("%s\n", command);
+    if (strcmp(command, "") == 0) {
+        printf("No relevant command for %s\n", manager.name);
     } else {
-        system(command);
+        if (PRINT_INSTEAD_OF_RUN) {
+            printf("%s\n", command);
+        } else {
+            system(command);
+        }
     }
 
    printf("####################\n" );
@@ -89,11 +93,10 @@ struct PackageManager defineAptPackageManager(char *targetPackage) {
 
 struct PackageManager defineFlatpakPackageManager(char *targetPackage) {
     char name[] = "flatpak";
-    char cleanCommand[100];
+    char cleanCommand[100] = "";
     char searchCommand[100];
     char upgradeCommand[100];
 
-    sprintf(cleanCommand, "No 'clean' command for %s", name);
     sprintf(searchCommand, "%s search %s", name, targetPackage);
     sprintf(upgradeCommand, "%s upgrade", name);
 
