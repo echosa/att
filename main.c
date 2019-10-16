@@ -4,6 +4,7 @@
 #include <string.h>
 
 #define DO_NOT_RUN false
+#define COMMAND_LENGTH 100
 #define SIZEOF(x)  (sizeof(x) / sizeof((x)[0]))
 #define CLEAN_ACTION "clean"
 #define SEARCH_ACTION "search"
@@ -17,10 +18,10 @@ enum action { Clean, Search, SearchExact, Upgrade, Invalid };
 *********/
 struct PackageManager {
     char  name[10];
-    char cleanCommand[100];
-    char searchCommand[100];
-    char searchExactCommand[100];
-    char upgradeCommand[100];
+    char cleanCommand[COMMAND_LENGTH];
+    char searchCommand[COMMAND_LENGTH];
+    char searchExactCommand[COMMAND_LENGTH];
+    char upgradeCommand[COMMAND_LENGTH];
 };
 
 /*********
@@ -76,7 +77,7 @@ struct PackageManager definePackageManager(
     char *upgradeCommand
 ) {
     struct PackageManager manager;
-    strcpy( manager.name, name);
+    strcpy(manager.name, name);
     strcpy(manager.cleanCommand, cleanCommand);
     strcpy(manager.searchCommand, searchCommand);
     strcpy(manager.searchExactCommand, searchExactCommand);
@@ -90,10 +91,10 @@ struct PackageManager definePackageManager(
 *********/
 struct PackageManager apt(char *targetPackage) {
     char name[] = "apt";
-    char cleanCommand[100];
-    char searchCommand[100];
-    char searchExactCommand[100];
-    char upgradeCommand[100];
+    char cleanCommand[COMMAND_LENGTH];
+    char searchCommand[COMMAND_LENGTH];
+    char searchExactCommand[COMMAND_LENGTH];
+    char upgradeCommand[COMMAND_LENGTH];
 
     sprintf(cleanCommand, "sudo %s autoremove", name);
     sprintf(searchCommand, "%s search %s", name, targetPackage);
@@ -105,10 +106,10 @@ struct PackageManager apt(char *targetPackage) {
 
 struct PackageManager brew(char *targetPackage) {
     char name[] = "brew";
-    char cleanCommand[100];
-    char searchCommand[100];
-    char searchExactCommand[100];
-    char upgradeCommand[100];
+    char cleanCommand[COMMAND_LENGTH];
+    char searchCommand[COMMAND_LENGTH];
+    char searchExactCommand[COMMAND_LENGTH];
+    char upgradeCommand[COMMAND_LENGTH];
 
     sprintf(cleanCommand, "%s cleanup", name);
     sprintf(searchCommand, "%s search %s", name, targetPackage);
@@ -120,10 +121,10 @@ struct PackageManager brew(char *targetPackage) {
 
 struct PackageManager flatpak(char *targetPackage) {
     char name[] = "flatpak";
-    char cleanCommand[100] = "";
-    char searchCommand[100];
-    char searchExactCommand[100];
-    char upgradeCommand[100];
+    char cleanCommand[COMMAND_LENGTH] = "";
+    char searchCommand[COMMAND_LENGTH];
+    char searchExactCommand[COMMAND_LENGTH];
+    char upgradeCommand[COMMAND_LENGTH];
 
     sprintf(searchCommand, "%s search %s", name, targetPackage);
     sprintf(searchExactCommand, "%s search %s", name, targetPackage);
@@ -134,10 +135,10 @@ struct PackageManager flatpak(char *targetPackage) {
 
 struct PackageManager guix(char *targetPackage) {
     char name[] = "guix";
-    char cleanCommand[100];
-    char searchCommand[100];
-    char searchExactCommand[100];
-    char upgradeCommand[100];
+    char cleanCommand[COMMAND_LENGTH];
+    char searchCommand[COMMAND_LENGTH];
+    char searchExactCommand[COMMAND_LENGTH];
+    char upgradeCommand[COMMAND_LENGTH];
 
     sprintf(cleanCommand, "%s package --delete-generations; %s gc --collect-garbage; %s gc --list-dead", name, name, name);
     sprintf(searchCommand, "%s package -A %s", name, targetPackage);
@@ -149,10 +150,10 @@ struct PackageManager guix(char *targetPackage) {
 
 struct PackageManager snap(char *targetPackage) {
     char name[] = "snap";
-    char cleanCommand[100] = "";
-    char searchCommand[100];
-    char searchExactCommand[100];
-    char upgradeCommand[100];
+    char cleanCommand[COMMAND_LENGTH] = "";
+    char searchCommand[COMMAND_LENGTH];
+    char searchExactCommand[COMMAND_LENGTH];
+    char upgradeCommand[COMMAND_LENGTH];
 
     sprintf(searchCommand, "%s find %s", name, targetPackage);
     sprintf(searchExactCommand, "%s find %s", name, targetPackage);
