@@ -9,7 +9,7 @@
 * Structs
 *********/
 struct PackageManagerCommand {
-    char args[20];
+    char args[100];
     bool requiresRoot;
 };
 
@@ -58,7 +58,19 @@ struct PackageManager defineAptPackageManager(char *targetPackage) {
     char name[] = "apt";
 
     // Search Command
-    char searchCommandArgs[50];
+    char searchCommandArgs[100];
+    sprintf(searchCommandArgs, "search %s", targetPackage);
+    struct PackageManagerCommand searchCommand = definePackageManagerCommand(name, searchCommandArgs, false);
+
+    return definePackageManager(name, searchCommand);;
+}
+
+struct PackageManager defineFlatpakPackageManager(char *targetPackage) {
+    // Name
+    char name[] = "flatpak";
+
+    // Search Command
+    char searchCommandArgs[100];
     sprintf(searchCommandArgs, "search %s", targetPackage);
     struct PackageManagerCommand searchCommand = definePackageManagerCommand(name, searchCommandArgs, false);
 
@@ -78,7 +90,8 @@ int main(int argc, char *argv[]) {
     char *targetPackage = argv[2];
 
     struct PackageManager managers[] = {
-         defineAptPackageManager(targetPackage)
+         defineAptPackageManager(targetPackage),
+         defineFlatpakPackageManager(targetPackage)
     };
 
     for (int i = 0; i < SIZEOF(managers); i++) {
