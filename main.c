@@ -6,7 +6,7 @@
 #define DO_NOT_RUN false
 #define NAME_LENGTH 10
 #define COMMAND_LENGTH 100
-#define SIZEOF(x)  (sizeof(x) / sizeof((x)[0]))
+#define SIZE_OF(x) (sizeof(x) / sizeof((x)[0]))
 #define CLEAN_ACTION "clean"
 #define SEARCH_ACTION "search"
 #define SEARCH_EXACT_ACTION "exact"
@@ -18,7 +18,7 @@ enum action { Clean, Search, SearchExact, Upgrade, Invalid };
 * Structs
 *********/
 struct PackageManager {
-	char  name[NAME_LENGTH];
+	char name[NAME_LENGTH];
 	char cleanCommand[COMMAND_LENGTH];
 	char searchCommand[COMMAND_LENGTH];
 	char searchExactCommand[COMMAND_LENGTH];
@@ -33,7 +33,7 @@ enum action parseAction(char* action) {
 		return Clean;
 	} else if (strcmp(action, SEARCH_ACTION) == 0) {
 		return Search;
-	 } else if (strcmp(action, SEARCH_EXACT_ACTION) == 0) {
+	} else if (strcmp(action, SEARCH_EXACT_ACTION) == 0) {
 		return SearchExact;
 	} else if (strcmp(action, UPGRADE_ACTION) == 0) {
 		return Upgrade;
@@ -67,7 +67,7 @@ void runCommand(struct PackageManager manager, enum action action) {
 		}
 	}
 
-   printf("####################\n" );
+	printf("####################\n");
 }
 
 struct PackageManager definePackageManager(
@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
 		snap(targetPackage)
 	};
 
-	for (int i = 0; i < SIZEOF(managers); i++) {
+	for (int i = 0; i < SIZE_OF(managers); i++) {
 		runCommand(managers[i], action);
 	}
 
