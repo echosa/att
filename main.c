@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DO_NOT_RUN true
+#define DO_NOT_RUN false
 #define SIZEOF(x)  (sizeof(x) / sizeof((x)[0]))
 #define CLEAN_ACTION "clean"
 #define SEARCH_ACTION "search"
@@ -103,6 +103,21 @@ struct PackageManager apt(char *targetPackage) {
     return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
 
+struct PackageManager brew(char *targetPackage) {
+    char name[] = "brew";
+    char cleanCommand[100];
+    char searchCommand[100];
+    char searchExactCommand[100];
+    char upgradeCommand[100];
+
+    sprintf(cleanCommand, "%s cleanup", name);
+    sprintf(searchCommand, "%s search %s", name, targetPackage);
+    sprintf(searchExactCommand, "%s search /^%s$/", name, targetPackage);
+    sprintf(upgradeCommand, "%s update; %s upgrade", name, name);
+
+    return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
+}
+
 struct PackageManager flatpak(char *targetPackage) {
     char name[] = "flatpak";
     char cleanCommand[100] = "";
@@ -132,6 +147,20 @@ struct PackageManager guix(char *targetPackage) {
     return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
 
+struct PackageManager snap(char *targetPackage) {
+    char name[] = "snap";
+    char cleanCommand[100] = "";
+    char searchCommand[100];
+    char searchExactCommand[100];
+    char upgradeCommand[100];
+
+    sprintf(searchCommand, "%s find %s", name, targetPackage);
+    sprintf(searchExactCommand, "%s find %s", name, targetPackage);
+    sprintf(upgradeCommand, "sudo %s refresh", name);
+
+    return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
+}
+
 /*********
 * Main
 *********/
@@ -154,9 +183,11 @@ int main(int argc, char *argv[]) {
     char *targetPackage = argv[2];
 
     struct PackageManager managers[] = {
-         apt(targetPackage),
-         flatpak(targetPackage),
-         guix(targetPackage)
+        apt(targetPackage),
+        brew(targetPackage),
+        flatpak(targetPackage),
+        guix(targetPackage),
+        snap(targetPackage)
     };
 
     for (int i = 0; i < SIZEOF(managers); i++) {
