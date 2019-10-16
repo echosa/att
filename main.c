@@ -104,7 +104,7 @@ struct PackageManager defineFlatpakPackageManager(char *targetPackage) {
 * Main
 *********/
 int main(int argc, char *argv[]) {
-    if (argc < 1) {
+    if (argc < 2) {
         printf("Usage: %s <action> [package]\n", argv[0]);
         return 1;
     }
@@ -113,6 +113,9 @@ int main(int argc, char *argv[]) {
     if (action == Invalid) {
         printf("Invalid action: %s\n", argv[1]);
 
+        return 1;
+    } else if (action == Search && argc < 3) {
+        printf("Usage: %s <action> [package]\n", argv[0]);
         return 1;
     }
 
