@@ -97,10 +97,10 @@ struct PackageManager apt(char *targetPackage) {
 	char searchExactCommand[COMMAND_LENGTH];
 	char upgradeCommand[COMMAND_LENGTH];
 
-	sprintf(cleanCommand, "sudo %s autoremove", name);
-	sprintf(searchCommand, "%s search %s", name, targetPackage);
-	sprintf(searchExactCommand, "%s search ^%s$", name, targetPackage);
-	sprintf(upgradeCommand, "sudo %s upgrade; sudo %s upgrade", name, name);
+	snprintf(cleanCommand, COMMAND_LENGTH, "sudo %s autoremove", name);
+	snprintf(searchCommand, COMMAND_LENGTH, "%s search %s", name, targetPackage);
+	snprintf(searchExactCommand, COMMAND_LENGTH, "%s search ^%s$", name, targetPackage);
+	snprintf(upgradeCommand, COMMAND_LENGTH, "sudo %s upgrade; sudo %s upgrade", name, name);
 
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
@@ -112,10 +112,10 @@ struct PackageManager brew(char *targetPackage) {
 	char searchExactCommand[COMMAND_LENGTH];
 	char upgradeCommand[COMMAND_LENGTH];
 
-	sprintf(cleanCommand, "%s cleanup", name);
-	sprintf(searchCommand, "%s search %s", name, targetPackage);
-	sprintf(searchExactCommand, "%s search /^%s$/", name, targetPackage);
-	sprintf(upgradeCommand, "%s update; %s upgrade", name, name);
+	snprintf(cleanCommand, COMMAND_LENGTH, "%s cleanup", name);
+	snprintf(searchCommand, COMMAND_LENGTH, "%s search %s", name, targetPackage);
+	snprintf(searchExactCommand, COMMAND_LENGTH, "%s search /^%s$/", name, targetPackage);
+	snprintf(upgradeCommand, COMMAND_LENGTH, "%s update; %s upgrade", name, name);
 
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
@@ -127,9 +127,9 @@ struct PackageManager flatpak(char *targetPackage) {
 	char searchExactCommand[COMMAND_LENGTH];
 	char upgradeCommand[COMMAND_LENGTH];
 
-	sprintf(searchCommand, "%s search %s", name, targetPackage);
-	sprintf(searchExactCommand, "%s search %s", name, targetPackage);
-	sprintf(upgradeCommand, "%s upgrade", name);
+	snprintf(searchCommand, COMMAND_LENGTH, "%s search %s", name, targetPackage);
+	snprintf(searchExactCommand, COMMAND_LENGTH, "%s search %s", name, targetPackage);
+	snprintf(upgradeCommand, COMMAND_LENGTH, "%s upgrade", name);
 
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
@@ -141,10 +141,10 @@ struct PackageManager guix(char *targetPackage) {
 	char searchExactCommand[COMMAND_LENGTH];
 	char upgradeCommand[COMMAND_LENGTH];
 
-	sprintf(cleanCommand, "%s package --delete-generations; %s gc --collect-garbage; %s gc --list-dead", name, name, name);
-	sprintf(searchCommand, "%s package -A %s", name, targetPackage);
-	sprintf(searchExactCommand, "%s package -A ^%s$", name, targetPackage);
-	sprintf(upgradeCommand, "%s pull; %s package -U", name, name);
+	snprintf(cleanCommand, COMMAND_LENGTH, "%s package --delete-generations; %s gc --collect-garbage; %s gc --list-dead", name, name, name);
+	snprintf(searchCommand, COMMAND_LENGTH, "%s package -A %s", name, targetPackage);
+	snprintf(searchExactCommand, COMMAND_LENGTH, "%s package -A ^%s$", name, targetPackage);
+	snprintf(upgradeCommand, COMMAND_LENGTH, "%s pull; %s package -U", name, name);
 
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
@@ -156,9 +156,9 @@ struct PackageManager snap(char *targetPackage) {
 	char searchExactCommand[COMMAND_LENGTH];
 	char upgradeCommand[COMMAND_LENGTH];
 
-	sprintf(searchCommand, "%s find %s", name, targetPackage);
-	sprintf(searchExactCommand, "%s find %s", name, targetPackage);
-	sprintf(upgradeCommand, "sudo %s refresh", name);
+	snprintf(searchCommand, COMMAND_LENGTH, "%s find %s", name, targetPackage);
+	snprintf(searchExactCommand, COMMAND_LENGTH, "%s find %s", name, targetPackage);
+	snprintf(upgradeCommand, COMMAND_LENGTH, "sudo %s refresh", name);
 
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
