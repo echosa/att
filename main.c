@@ -1,22 +1,33 @@
+#include <getopt.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define DO_NOT_RUN true
+#define SIZE_OF(x) (sizeof(x) / sizeof((x)[0]))
+
 #define NAME_LENGTH 10
 #define COMMAND_LENGTH 100
-#define SIZE_OF(x) (sizeof(x) / sizeof((x)[0]))
+
 #define CLEAN_ACTION "clean"
 #define SEARCH_ACTION "search"
-#define SEARCH_EXACT_ACTION "exact"
 #define UPGRADE_ACTION "upgrade"
 
-enum action { Clean, Search, SearchExact, Upgrade, Invalid };
+#define DEBUG_OPTION "debug"
+#define EXACT_SEARCH_OPTION "exact"
+#define HELP_OPTION "help"
+
+enum action { Clean, Search, SearchExact, Upgrade, Help, Invalid };
 
 /*********
 * Structs
 *********/
+struct ParsedAction {
+	enum action action;
+	char* target;
+	bool debug;
+};
+
 struct PackageManager {
 	char name[NAME_LENGTH];
 	char cleanCommand[COMMAND_LENGTH];
@@ -28,13 +39,18 @@ struct PackageManager {
 /*********
 * Functions
 *********/
-enum action parseAction(char* action) {
+void printUsage(char* programName) {
+	printf("Usage:\n");
+	printf("%s search [--exact] <package>\n", programName);
+	printf("%s upgrade\n", programName);
+	printf("%s clean\n", programName);
+}
+
+enum action parseAction(char* action, bool exactSearch) {
 	if (strcmp(action, CLEAN_ACTION) == 0) {
 		return Clean;
 	} else if (strcmp(action, SEARCH_ACTION) == 0) {
-		return Search;
-	} else if (strcmp(action, SEARCH_EXACT_ACTION) == 0) {
-		return SearchExact;
+		return exactSearch ? SearchExact : Search;
 	} else if (strcmp(action, UPGRADE_ACTION) == 0) {
 		return Upgrade;
 	} else {
@@ -42,19 +58,78 @@ enum action parseAction(char* action) {
 	}
 }
 
-void runCommand(struct PackageManager *manager, enum action action) {
+struct ParsedAction* parseOptions(int argc, char *argv[]) {
+	int c;
+	int digit_optind = 0;
+	bool exactSearch = false;
+	char* action;
+	struct ParsedAction* parsedAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
+	parsedAction->action = Invalid;
+	parsedAction->target = NULL;
+	parsedAction->debug = false;
+
+	while (1) {
+		int this_option_optind = optind ? optind : 1;
+		int option_index = 0;
+		static struct option long_options[] = {
+			{ DEBUG_OPTION, no_argument, NULL, 'd' },
+			{ EXACT_SEARCH_OPTION, no_argument, NULL, 'e' },
+			{ HELP_OPTION, no_argument, NULL, 'h' },
+			{ NULL, 0, NULL, 0 }
+		};
+
+		c = getopt_long(argc, argv, "eh",  long_options, &option_index);
+		if (c == -1) {
+			break;
+		}
+
+		switch (c) {
+		case 'd':
+			parsedAction->debug = true;
+			break;
+
+		case 'e':
+			exactSearch = true;
+			break;
+
+		case 'h':
+			parsedAction->action = Help;
+			return parsedAction;
+		}
+	}
+
+	if (optind >= argc) {
+		parsedAction->action = Invalid;
+		return parsedAction;
+	}
+
+	if (optind < argc) {
+		parsedAction->action = parseAction(argv[optind++], exactSearch);
+	}
+	if (optind < argc) {
+		parsedAction->target = argv[optind++];
+	}
+
+	if ((parsedAction->action == Search || parsedAction->action == SearchExact) && parsedAction->target == NULL) {
+		parsedAction->action = Invalid;
+	}
+
+	return parsedAction;
+}
+
+void runCommand(struct PackageManager* manager, struct ParsedAction* parsedAction) {
 	printf("####################\n");
 	printf("####################\n");
 	printf("%s\n", manager->name);
 
 	char *command;
-	if (action == Clean) {
+	if (parsedAction->action == Clean) {
 		command = manager->cleanCommand;
-	} else if (action == Search) {
+	} else if (parsedAction->action == Search) {
 		command = manager->searchCommand;
-	} else if (action == SearchExact) {
+	} else if (parsedAction->action == SearchExact) {
 		command = manager->searchExactCommand;
-	} else if (action == Upgrade) {
+	} else if (parsedAction->action == Upgrade) {
 		command = manager->upgradeCommand;
 	}
 
@@ -62,7 +137,7 @@ void runCommand(struct PackageManager *manager, enum action action) {
 		printf("No relevant command for %s\n", manager->name);
 	} else {
 		printf("%s\n", command);
-		if (!DO_NOT_RUN) {
+		if (!parsedAction->debug) {
 			system(command);
 		}
 	}
@@ -168,32 +243,32 @@ struct PackageManager* snap(char *targetPackage) {
 *********/
 int main(int argc, char *argv[]) {
 	if (argc < 2) {
-		printf("Usage: %s <action> [package]\n", argv[0]);
+		printUsage(argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	enum action action = parseAction(argv[1]);
-	if (action == Invalid) {
-		printf("Invalid action: %s\n", argv[1]);
+	struct ParsedAction* parsedAction = parseOptions(argc, argv);
 
-		return EXIT_FAILURE;
-	} else if ((action == Search || action == SearchExact) && argc < 3) {
-		printf("Usage: %s <action> package\n", argv[0]);
+	if (parsedAction->action == Invalid) {
+		printUsage(argv[0]);
 		return EXIT_FAILURE;
 	}
 
-	char *targetPackage = argv[2];
+	if (parsedAction->action == Help) {
+		printUsage(argv[0]);
+		return EXIT_SUCCESS;
+	}
 
 	struct PackageManager *managers[] = {
-		apt(targetPackage),
-		brew(targetPackage),
-		flatpak(targetPackage),
-		guix(targetPackage),
-		snap(targetPackage)
+		apt(parsedAction->target),
+		brew(parsedAction->target),
+		flatpak(parsedAction->target),
+		guix(parsedAction->target),
+		snap(parsedAction->target)
 	};
 
 	for (int i = 0; i < SIZE_OF(managers); i++) {
-		runCommand(managers[i], action);
+		runCommand(managers[i], parsedAction);
 	}
 
 	return EXIT_SUCCESS;
