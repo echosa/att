@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DO_NOT_RUN false
+#define DO_NOT_RUN true
 #define NAME_LENGTH 10
 #define COMMAND_LENGTH 100
 #define SIZE_OF(x) (sizeof(x) / sizeof((x)[0]))
@@ -42,24 +42,24 @@ enum action parseAction(char* action) {
 	}
 }
 
-void runCommand(struct PackageManager manager, enum action action) {
+void runCommand(struct PackageManager *manager, enum action action) {
 	printf("####################\n");
 	printf("####################\n");
-	printf("%s\n", manager.name);
+	printf("%s\n", manager->name);
 
 	char *command;
 	if (action == Clean) {
-		command = manager.cleanCommand;
+		command = manager->cleanCommand;
 	} else if (action == Search) {
-		command = manager.searchCommand;
+		command = manager->searchCommand;
 	} else if (action == SearchExact) {
-		command = manager.searchExactCommand;
+		command = manager->searchExactCommand;
 	} else if (action == Upgrade) {
-		command = manager.upgradeCommand;
+		command = manager->upgradeCommand;
 	}
 
 	if (strcmp(command, "") == 0) {
-		printf("No relevant command for %s\n", manager.name);
+		printf("No relevant command for %s\n", manager->name);
 	} else {
 		printf("%s\n", command);
 		if (!DO_NOT_RUN) {
@@ -70,19 +70,19 @@ void runCommand(struct PackageManager manager, enum action action) {
 	printf("####################\n");
 }
 
-struct PackageManager definePackageManager(
+struct PackageManager* definePackageManager(
 	char *name,
 	char *cleanCommand,
 	char *searchCommand,
 	char *searchExactCommand,
 	char *upgradeCommand
 ) {
-	struct PackageManager manager;
-	strncpy(manager.name, name, NAME_LENGTH);
-	strncpy(manager.cleanCommand, cleanCommand, COMMAND_LENGTH);
-	strncpy(manager.searchCommand, searchCommand, COMMAND_LENGTH);
-	strncpy(manager.searchExactCommand, searchExactCommand, COMMAND_LENGTH);
-	strncpy(manager.upgradeCommand, upgradeCommand, COMMAND_LENGTH);
+	struct PackageManager *manager = (struct PackageManager *)(malloc(sizeof(struct PackageManager)));
+	strncpy(manager->name, name, NAME_LENGTH);
+	strncpy(manager->cleanCommand, cleanCommand, COMMAND_LENGTH);
+	strncpy(manager->searchCommand, searchCommand, COMMAND_LENGTH);
+	strncpy(manager->searchExactCommand, searchExactCommand, COMMAND_LENGTH);
+	strncpy(manager->upgradeCommand, upgradeCommand, COMMAND_LENGTH);
 
 	return manager;
 }
@@ -90,7 +90,7 @@ struct PackageManager definePackageManager(
 /*********
 * Package Managers
 *********/
-struct PackageManager apt(char *targetPackage) {
+struct PackageManager* apt(char *targetPackage) {
 	char name[] = "apt";
 	char cleanCommand[COMMAND_LENGTH];
 	char searchCommand[COMMAND_LENGTH];
@@ -105,7 +105,7 @@ struct PackageManager apt(char *targetPackage) {
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
 
-struct PackageManager brew(char *targetPackage) {
+struct PackageManager* brew(char *targetPackage) {
 	char name[] = "brew";
 	char cleanCommand[COMMAND_LENGTH];
 	char searchCommand[COMMAND_LENGTH];
@@ -120,7 +120,7 @@ struct PackageManager brew(char *targetPackage) {
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
 
-struct PackageManager flatpak(char *targetPackage) {
+struct PackageManager* flatpak(char *targetPackage) {
 	char name[] = "flatpak";
 	char cleanCommand[COMMAND_LENGTH] = "";
 	char searchCommand[COMMAND_LENGTH];
@@ -134,7 +134,7 @@ struct PackageManager flatpak(char *targetPackage) {
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
 
-struct PackageManager guix(char *targetPackage) {
+struct PackageManager* guix(char *targetPackage) {
 	char name[] = "guix";
 	char cleanCommand[COMMAND_LENGTH];
 	char searchCommand[COMMAND_LENGTH];
@@ -149,7 +149,7 @@ struct PackageManager guix(char *targetPackage) {
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
 
-struct PackageManager snap(char *targetPackage) {
+struct PackageManager* snap(char *targetPackage) {
 	char name[] = "snap";
 	char cleanCommand[COMMAND_LENGTH] = "";
 	char searchCommand[COMMAND_LENGTH];
@@ -184,7 +184,7 @@ int main(int argc, char *argv[]) {
 
 	char *targetPackage = argv[2];
 
-	struct PackageManager managers[] = {
+	struct PackageManager *managers[] = {
 		apt(targetPackage),
 		brew(targetPackage),
 		flatpak(targetPackage),
