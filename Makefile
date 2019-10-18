@@ -1,2 +1,2 @@
 att: main.c
-	gcc -o att main.c
+	gcc -Wall -o att main.c
