@@ -22,3 +22,5 @@ $ att exact emacs # This is an exact search
 $ att upgrade # Update and upgrade all packages in all managers
 $ att clean # Clean packages in all managers
 ```
+
+Note: Only package managers that are installed on your system will attempt to run, in order to reduce output and noise.
