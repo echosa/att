@@ -61,16 +61,13 @@ enum action parseAction(char* action, bool exactSearch) {
 
 struct ParsedAction* parseOptions(int argc, char *argv[]) {
 	int c;
-	int digit_optind = 0;
 	bool exactSearch = false;
-	char* action;
 	struct ParsedAction* parsedAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
 	parsedAction->action = Invalid;
 	parsedAction->target = NULL;
 	parsedAction->debug = false;
 
 	while (1) {
-		int this_option_optind = optind ? optind : 1;
 		int option_index = 0;
 		static struct option long_options[] = {
 			{ DEBUG_OPTION, no_argument, NULL, 'd' },
@@ -269,7 +266,6 @@ int main(int argc, char *argv[]) {
 	};
 
 	char installedCheck[INSTALL_CHECK_LENGTH];
-	int installed;
 	for (int i = 0; i < SIZE_OF(managers); i++) {
 		snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", managers[i]->name);
 		if (system(installedCheck) == 0) {
