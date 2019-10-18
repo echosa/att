@@ -18,7 +18,7 @@ Using `att` is pretty straight forward. Examples include:
 
 ```
 $ att search emacs # Search all managers for a package
-$ att exact emacs # This is an exact search
+$ att search --exact emacs # This is an exact search
 $ att upgrade # Update and upgrade all packages in all managers
 $ att clean # Clean packages in all managers
 ```
