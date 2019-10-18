@@ -205,7 +205,7 @@ struct PackageManager* flatpak(char *targetPackage) {
 
 	snprintf(searchCommand, COMMAND_LENGTH, "%s search %s", name, targetPackage);
 	snprintf(searchExactCommand, COMMAND_LENGTH, "%s search %s", name, targetPackage);
-	snprintf(upgradeCommand, COMMAND_LENGTH, "%s upgrade", name);
+	snprintf(upgradeCommand, COMMAND_LENGTH, "%s update", name);
 
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
@@ -220,7 +220,7 @@ struct PackageManager* guix(char *targetPackage) {
 	snprintf(cleanCommand, COMMAND_LENGTH, "%s package --delete-generations; %s gc --collect-garbage; %s gc --list-dead", name, name, name);
 	snprintf(searchCommand, COMMAND_LENGTH, "%s package -A %s", name, targetPackage);
 	snprintf(searchExactCommand, COMMAND_LENGTH, "%s package -A ^%s$", name, targetPackage);
-	snprintf(upgradeCommand, COMMAND_LENGTH, "%s pull; %s package -U", name, name);
+	snprintf(upgradeCommand, COMMAND_LENGTH, "%s pull; %s package -u", name, name);
 
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
