@@ -8,6 +8,7 @@
 
 #define NAME_LENGTH 10
 #define COMMAND_LENGTH 100
+#define INSTALL_CHECK_LENGTH 50
 
 #define CLEAN_ACTION "clean"
 #define SEARCH_ACTION "search"
@@ -267,8 +268,13 @@ int main(int argc, char *argv[]) {
 		snap(parsedAction->target)
 	};
 
+	char installedCheck[INSTALL_CHECK_LENGTH];
+	int installed;
 	for (int i = 0; i < SIZE_OF(managers); i++) {
-		runCommand(managers[i], parsedAction);
+		snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", managers[i]->name);
+		if (system(installedCheck) == 0) {
+			runCommand(managers[i], parsedAction);
+		}
 	}
 
 	return EXIT_SUCCESS;
