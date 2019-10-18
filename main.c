@@ -77,7 +77,7 @@ struct PackageManager* definePackageManager(
 	char *searchExactCommand,
 	char *upgradeCommand
 ) {
-	struct PackageManager *manager = (struct PackageManager *)(malloc(sizeof(struct PackageManager)));
+	struct PackageManager* manager = (struct PackageManager*)(malloc(sizeof(struct PackageManager)));
 	strncpy(manager->name, name, NAME_LENGTH);
 	strncpy(manager->cleanCommand, cleanCommand, COMMAND_LENGTH);
 	strncpy(manager->searchCommand, searchCommand, COMMAND_LENGTH);
