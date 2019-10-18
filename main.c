@@ -169,17 +169,17 @@ struct PackageManager* snap(char *targetPackage) {
 int main(int argc, char *argv[]) {
 	if (argc < 2) {
 		printf("Usage: %s <action> [package]\n", argv[0]);
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	enum action action = parseAction(argv[1]);
 	if (action == Invalid) {
 		printf("Invalid action: %s\n", argv[1]);
 
-		return 1;
+		return EXIT_FAILURE;
 	} else if ((action == Search || action == SearchExact) && argc < 3) {
 		printf("Usage: %s <action> package\n", argv[0]);
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	char *targetPackage = argv[2];
@@ -196,5 +196,5 @@ int main(int argc, char *argv[]) {
 		runCommand(managers[i], action);
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }
