@@ -173,7 +173,7 @@ struct PackageManager* apt(char *targetPackage) {
 	snprintf(cleanCommand, COMMAND_LENGTH, "sudo %s autoremove", name);
 	snprintf(searchCommand, COMMAND_LENGTH, "%s search %s", name, targetPackage);
 	snprintf(searchExactCommand, COMMAND_LENGTH, "%s search ^%s$", name, targetPackage);
-	snprintf(upgradeCommand, COMMAND_LENGTH, "sudo %s upgrade; sudo %s upgrade", name, name);
+	snprintf(upgradeCommand, COMMAND_LENGTH, "sudo %s update; sudo %s upgrade", name, name);
 
 	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
 }
