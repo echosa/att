@@ -195,11 +195,12 @@ struct PackageManager* brew(char *targetPackage) {
 
 struct PackageManager* flatpak(char *targetPackage) {
 	char name[] = "flatpak";
-	char cleanCommand[COMMAND_LENGTH] = "";
+	char cleanCommand[COMMAND_LENGTH];
 	char searchCommand[COMMAND_LENGTH];
 	char searchExactCommand[COMMAND_LENGTH];
 	char upgradeCommand[COMMAND_LENGTH];
 
+	snprintf(cleanCommand, COMMAND_LENGTH, "%s uninstall --unused", name);
 	snprintf(searchCommand, COMMAND_LENGTH, "%s search %s", name, targetPackage);
 	snprintf(searchExactCommand, COMMAND_LENGTH, "%s search %s", name, targetPackage);
 	snprintf(upgradeCommand, COMMAND_LENGTH, "%s update", name);
