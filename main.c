@@ -6,17 +6,17 @@
 
 #define SIZE_OF(x) (sizeof(x) / sizeof((x)[0]))
 
-#define NAME_LENGTH 10
-#define COMMAND_LENGTH 100
-#define INSTALL_CHECK_LENGTH 50
+const int NAME_LENGTH = 10;
+const int COMMAND_LENGTH = 100;
+const int INSTALL_CHECK_LENGTH = 50;
 
-#define CLEAN_ACTION "clean"
-#define SEARCH_ACTION "search"
-#define UPGRADE_ACTION "upgrade"
+const char CLEAN_ACTION[] = "clean";
+const char SEARCH_ACTION[] = "search";
+const char UPGRADE_ACTION[] = "upgrade";
 
-#define DEBUG_OPTION "debug"
-#define EXACT_SEARCH_OPTION "exact"
-#define HELP_OPTION "help"
+const char DEBUG_OPTION[] = "debug";
+const char EXACT_SEARCH_OPTION[] = "exact";
+const char HELP_OPTION[] = "help";
 
 enum action { Clean, Search, SearchExact, Upgrade, Help, Invalid };
 
