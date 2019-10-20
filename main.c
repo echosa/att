@@ -225,7 +225,6 @@ struct PackageManager* guix(char *targetPackage) {
 
 struct PackageManager* snap(char *targetPackage) {
 	char name[] = "snap";
-	char cleanCommand[COMMAND_LENGTH] = "";
 	char searchCommand[COMMAND_LENGTH];
 	char searchExactCommand[COMMAND_LENGTH];
 	char upgradeCommand[COMMAND_LENGTH];
@@ -234,7 +233,7 @@ struct PackageManager* snap(char *targetPackage) {
 	snprintf(searchExactCommand, COMMAND_LENGTH, "%s find %s", name, targetPackage);
 	snprintf(upgradeCommand, COMMAND_LENGTH, "sudo %s refresh", name);
 
-	return definePackageManager(name, cleanCommand, searchCommand, searchExactCommand, upgradeCommand);
+	return definePackageManager(name, "", searchCommand, searchExactCommand, upgradeCommand);
 }
 
 /*********
