@@ -25,6 +25,7 @@ $ att search emacs # Search all managers for a package
 $ att search --exact emacs # This is an exact search
 $ att upgrade # Update and upgrade all packages in all managers
 $ att clean # Clean packages in all managers
+$ att clean --managers=apt,flatpak # Only clean packages in apt and flatpak
 ```
 
 Note: Only package managers that are installed on your system will attempt to run, in order to reduce output and noise.
