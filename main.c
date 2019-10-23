@@ -6,17 +6,18 @@
 
 #define SIZE_OF(x) (sizeof(x) / sizeof((x)[0]))
 
-const int NAME_LENGTH = 10;
-const int COMMAND_LENGTH = 100;
-const int INSTALL_CHECK_LENGTH = 50;
+#define NAME_LENGTH 10
+#define COMMAND_LENGTH 100
 
-const char CLEAN_ACTION[] = "clean";
-const char SEARCH_ACTION[] = "search";
-const char UPGRADE_ACTION[] = "upgrade";
+static const int INSTALL_CHECK_LENGTH = 50;
 
-const char DEBUG_OPTION[] = "debug";
-const char EXACT_SEARCH_OPTION[] = "exact";
-const char HELP_OPTION[] = "help";
+static const char CLEAN_ACTION[] = "clean";
+static const char SEARCH_ACTION[] = "search";
+static const char UPGRADE_ACTION[] = "upgrade";
+
+static const char DEBUG_OPTION[] = "debug";
+static const char EXACT_SEARCH_OPTION[] = "exact";
+static const char HELP_OPTION[] = "help";
 
 enum action { Clean, Search, SearchExact, Upgrade, Help, Invalid };
 
@@ -266,7 +267,7 @@ int main(int argc, char *argv[]) {
 	};
 
 	char installedCheck[INSTALL_CHECK_LENGTH];
-	for (int i = 0; i < SIZE_OF(managers); i++) {
+	for (long unsigned int i = 0; i < SIZE_OF(managers); i++) {
 		snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", managers[i]->name);
 		if (system(installedCheck) == 0) {
 			runCommand(managers[i], parsedAction);
