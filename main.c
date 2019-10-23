@@ -6,8 +6,9 @@
 
 #define SIZE_OF(x) (sizeof(x) / sizeof((x)[0]))
 
-const int NAME_LENGTH = 10;
-const int COMMAND_LENGTH = 100;
+#define NAME_LENGTH 10
+#define COMMAND_LENGTH 100
+
 const int INSTALL_CHECK_LENGTH = 50;
 
 const char CLEAN_ACTION[] = "clean";
@@ -266,7 +267,7 @@ int main(int argc, char *argv[]) {
 	};
 
 	char installedCheck[INSTALL_CHECK_LENGTH];
-	for (int i = 0; i < SIZE_OF(managers); i++) {
+	for (long unsigned int i = 0; i < SIZE_OF(managers); i++) {
 		snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", managers[i]->name);
 		if (system(installedCheck) == 0) {
 			runCommand(managers[i], parsedAction);
