@@ -188,7 +188,7 @@ void runCommand(struct PackageManager* manager, struct ParsedAction* parsedActio
 	printf(DIVIDER);
 	printf("%s\n", manager->name);
 
-		char *command;
+	char *command;
 	if (parsedAction->action == Clean) {
 		command = manager->cleanCommand;
 	} else if (parsedAction->action == Search) {
