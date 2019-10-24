@@ -215,8 +215,6 @@ void runCommandForAllManagers(struct PackageManager* managers[], struct ParsedAc
 }
 
 void installPackage(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
-	printf("***Package installation not yet supported.***\n");
-
 	printf("Searching for package to install...\n");
 
 	// loop through all managers and do an exact search for the target
@@ -227,6 +225,7 @@ void installPackage(struct PackageManager* managers[], struct ParsedAction* pars
 	// allow user to select result
 	printf(DIVIDER);
 	printf(DIVIDER);
+
 	printf("Which manager would you like to use? ");
 	char managerChoice[COMMAND_LENGTH];
 	scanf("%s", managerChoice);
@@ -236,24 +235,24 @@ void installPackage(struct PackageManager* managers[], struct ParsedAction* pars
 	scanf("%s", packageChoice);
 
 	// install the selected result
+    int managerIndex;
 	if (strcmp(managerChoice, "apt") == 0) {
-		printf("Installing %s from apt...\n", packageChoice);
-		runCommand(managers[Apt], parsedAction);
+        managerIndex = Apt;
 	} else if (strcmp(managerChoice, "brew") == 0) {
-		printf("Installing %s from brew...", packageChoice);
-		runCommand(managers[Brew], parsedAction);
+        managerIndex = Brew;
 	} else if (strcmp(managerChoice, "flatpak") == 0) {
-		printf("Installing %s from flatpak...", packageChoice);
-		runCommand(managers[Flatpak], parsedAction);
+        managerIndex = Flatpak;
 	} else if (strcmp(managerChoice, "guix") == 0) {
-		printf("Installing %s from guix...", packageChoice);
-		runCommand(managers[Guix], parsedAction);
+        managerIndex = Guix;
 	} else if (strcmp(managerChoice, "snap") == 0) {
-		printf("Installing %s from snap...", packageChoice);
-		runCommand(managers[Snap], parsedAction);
+        managerIndex = Snap;
 	} else {
 		printf("No %s package manager found.\n", managerChoice);
+        return;
 	}
+
+    printf("Installing %s from %s...\n", packageChoice, managers[managerIndex]->name);
+    runCommand(managers[managerIndex], parsedAction);
 }
 
 struct PackageManager* definePackageManager(
@@ -363,27 +362,7 @@ struct PackageManager* snap(struct ParsedAction* parsedAction) {
 	return definePackageManager(name, "", installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->snap);
 }
 
-/*********
-* Main
-*********/
-int main(int argc, char *argv[]) {
-	if (argc < 2) {
-		printUsage(argv[0]);
-		return EXIT_FAILURE;
-	}
-
-	struct ParsedAction* parsedAction = parseOptions(argc, argv);
-
-	if (parsedAction->action == Invalid) {
-		printUsage(argv[0]);
-		return EXIT_FAILURE;
-	}
-
-	if (parsedAction->action == Help) {
-		printUsage(argv[0]);
-		return EXIT_SUCCESS;
-	}
-
+void executeAction(struct ParsedAction* parsedAction) {
 	struct PackageManager* managers[] = {
 		apt(parsedAction),
 		brew(parsedAction),
@@ -397,6 +376,33 @@ int main(int argc, char *argv[]) {
 	} else {
 		runCommandForAllManagers(managers, parsedAction);
 	}
+}
+
+/*********
+* Main
+*********/
+int main(int argc, char *argv[]) {
+	if (argc < 2) {
+		printUsage(argv[0]);
+
+		return EXIT_FAILURE;
+	}
+
+	struct ParsedAction* parsedAction = parseOptions(argc, argv);
+
+	if (parsedAction->action == Invalid) {
+		printUsage(argv[0]);
+
+		return EXIT_FAILURE;
+	}
+
+	if (parsedAction->action == Help) {
+		printUsage(argv[0]);
+
+		return EXIT_SUCCESS;
+	}
+
+    executeAction(parsedAction);
 
 	return EXIT_SUCCESS;
 }
