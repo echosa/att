@@ -178,6 +178,7 @@ void runCommand(struct PackageManager* manager, struct ParsedAction* parsedActio
 	printf(DIVIDER);
 	printf(DIVIDER);
 	printf("%s\n", manager->name);
+	printf(DIVIDER);
 
 	char *command;
 	if (parsedAction->action == Clean) {
@@ -218,11 +219,32 @@ void installPackage(struct PackageManager* managers[], struct ParsedAction* pars
 	searchExactAction->action = SearchExact;
 	runCommandForAllManagers(managers, searchExactAction);
 
-	// parse and present results to user
-
 	// allow user to select result
+	printf(DIVIDER);
+	printf(DIVIDER);
+	printf("Which manager would you like to use? ");
+	char managerChoice[COMMAND_LENGTH];
+	scanf("%s", managerChoice);
+
+	printf("Which package would you like to install? ");
+	char packageChoice[COMMAND_LENGTH];
+	scanf("%s", packageChoice);
 
 	// install the selected result
+	if (strcmp(managerChoice, "apt") == 0) {
+		printf("Installing %s from apt...\n", packageChoice);
+	} else if (strcmp(managerChoice, "brew") == 0) {
+		printf("Installing %s from brew...", packageChoice);
+	} else if (strcmp(managerChoice, "flatpak") == 0) {
+		printf("Installing %s from flatpak...", packageChoice);
+	} else if (strcmp(managerChoice, "guix") == 0) {
+		printf("Installing %s from guix...", packageChoice);
+	} else if (strcmp(managerChoice, "snap") == 0) {
+		printf("Installing %s from snap...", packageChoice);
+	} else {
+		printf("No %s package manager found.\n", managerChoice);
+	}
+
 }
 
 struct PackageManager* definePackageManager(
