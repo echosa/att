@@ -6,8 +6,7 @@
 
 #define NAME_LENGTH 10
 #define COMMAND_LENGTH 100
-
-static const int INSTALL_CHECK_LENGTH = 50;
+#define INSTALL_CHECK_LENGTH 50
 
 static const char CLEAN_ACTION[] = "clean";
 static const char INSTALL_ACTION[] = "install";
