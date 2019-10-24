@@ -37,10 +37,11 @@ struct Managers {
 };
 
 struct ParsedAction {
+    struct Managers* managers;
     enum Action action;
     char* target;
+    bool exact;
     bool debug;
-    struct Managers* managers;
 };
 
 struct PackageManager {
@@ -97,14 +98,14 @@ struct Managers* setAllManagers() {
 
 struct ParsedAction* parseOptions(int argc, char *argv[]) {
     int c;
-    bool exactSearch = false;
     char *token;
 
     struct ParsedAction* parsedAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
+    parsedAction->managers = setAllManagers();
     parsedAction->action = Invalid;
     parsedAction->target = NULL;
+    parsedAction->exact = false;
     parsedAction->debug = false;
-    parsedAction->managers = setAllManagers();
 
     while (1) {
         int option_index = 0;
@@ -127,7 +128,7 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
             break;
 
         case 'e':
-            exactSearch = true;
+            parsedAction->exact = true;
             break;
 
         case 'h':
@@ -164,7 +165,7 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
     }
 
     if (optind < argc) {
-        parsedAction->action = parseAction(argv[optind++], exactSearch);
+        parsedAction->action = parseAction(argv[optind++], parsedAction->exact);
     }
     if (optind < argc) {
         parsedAction->target = argv[optind++];
@@ -218,9 +219,13 @@ void installPackage(struct PackageManager* managers[], struct ParsedAction* pars
     printf("Searching for package to install...\n");
 
     // loop through all managers and do an exact search for the target
-    struct ParsedAction* searchExactAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
-    searchExactAction->action = SearchExact;
-    runCommandForAllManagers(managers, searchExactAction);
+    struct ParsedAction* searchAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
+    if (parsedAction->exact) {
+        searchAction->action = SearchExact;
+    } else {
+        searchAction->action = Search;
+    }        
+    runCommandForAllManagers(managers, searchAction);
 
     // allow user to select result
     printf(DIVIDER);
