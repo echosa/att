@@ -266,6 +266,12 @@ void executeAction(struct PackageManager* managers[], struct ParsedAction* parse
     } else {
         runCommandForAllManagers(managers, parsedAction);
     }
+
+    free(parsedAction->managers);
+    free(parsedAction);
+    for (int i = 0; i < MANAGERS_COUNT; i++) {
+        free(managers[i]);
+    }
 }
 
 struct PackageManager* definePackageManager(
