@@ -22,6 +22,7 @@ static const char MANAGERS_OPTION[] = "managers";
 static const char DIVIDER[] = "####################\n";
 
 enum action { Clean, Install, Search, SearchExact, Upgrade, Help, Invalid };
+
 enum PackageManagers { Apt, Brew, Flatpak, Guix, Snap };
 static const int MANAGERS_COUNT = 5;
 
@@ -255,6 +256,14 @@ void installPackage(struct PackageManager* managers[], struct ParsedAction* pars
     runCommand(managers[managerIndex], parsedAction);
 }
 
+void executeAction(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
+	if (parsedAction->action == Install) {
+		installPackage(managers, parsedAction);
+	} else {
+		runCommandForAllManagers(managers, parsedAction);
+	}
+}
+
 struct PackageManager* definePackageManager(
 	char *name,
 	char *cleanCommand,
@@ -362,22 +371,6 @@ struct PackageManager* snap(struct ParsedAction* parsedAction) {
 	return definePackageManager(name, "", installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->snap);
 }
 
-void executeAction(struct ParsedAction* parsedAction) {
-	struct PackageManager* managers[] = {
-		apt(parsedAction),
-		brew(parsedAction),
-		flatpak(parsedAction),
-		guix(parsedAction),
-		snap(parsedAction)
-	};
-
-	if (parsedAction->action == Install) {
-		installPackage(managers, parsedAction);
-	} else {
-		runCommandForAllManagers(managers, parsedAction);
-	}
-}
-
 /*********
 * Main
 *********/
@@ -402,7 +395,14 @@ int main(int argc, char *argv[]) {
 		return EXIT_SUCCESS;
 	}
 
-    executeAction(parsedAction);
+	struct PackageManager* managers[] = {
+		apt(parsedAction),
+		brew(parsedAction),
+		flatpak(parsedAction),
+		guix(parsedAction),
+		snap(parsedAction)
+	};
+    executeAction(managers, parsedAction);
 
 	return EXIT_SUCCESS;
 }
