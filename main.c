@@ -176,7 +176,8 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
 }
 
 void installPackage(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
-	printf("Searching for package to install...\n");
+	printf("Package installation not yet supported.\n");
+	//printf("Searching for package to install...\n");
 	// loop through all managers and do an exact search for the target
 	// parse and present results to user
 	// allow user to select result
