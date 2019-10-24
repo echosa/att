@@ -12,6 +12,7 @@
 static const int INSTALL_CHECK_LENGTH = 50;
 
 static const char CLEAN_ACTION[] = "clean";
+static const char INSTALL_ACTION[] = "install";
 static const char SEARCH_ACTION[] = "search";
 static const char UPGRADE_ACTION[] = "upgrade";
 
@@ -20,7 +21,9 @@ static const char EXACT_SEARCH_OPTION[] = "exact";
 static const char HELP_OPTION[] = "help";
 static const char MANAGERS_OPTION[] = "managers";
 
-enum action { Clean, Search, SearchExact, Upgrade, Help, Invalid };
+static const char DIVIDER[] = "####################\n";
+
+enum action { Clean, Install, Search, SearchExact, Upgrade, Help, Invalid };
 
 /*********
 * Structs
@@ -59,9 +62,18 @@ void printUsage(char* programName) {
 	printf("%s clean\n", programName);
 }
 
+bool isInstalled(struct PackageManager* manager) {
+	char installedCheck[INSTALL_CHECK_LENGTH];
+	snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", manager->name);
+
+	return system(installedCheck) == 0;
+}
+
 enum action parseAction(char* action, bool exactSearch) {
 	if (strcmp(action, CLEAN_ACTION) == 0) {
 		return Clean;
+	} else if (strcmp(action, INSTALL_ACTION) == 0) {
+		return Install;
 	} else if (strcmp(action, SEARCH_ACTION) == 0) {
 		return exactSearch ? SearchExact : Search;
 	} else if (strcmp(action, UPGRADE_ACTION) == 0) {
@@ -156,19 +168,23 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
 		parsedAction->target = argv[optind++];
 	}
 
-	if ((parsedAction->action == Search || parsedAction->action == SearchExact) && parsedAction->target == NULL) {
+	if ((parsedAction->action == Search || parsedAction->action == SearchExact || parsedAction->action == Install) && parsedAction->target == NULL) {
 		parsedAction->action = Invalid;
 	}
 
 	return parsedAction;
 }
 
+void installPackage(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
+	printf("Searching for package to install...\n");
+}
+
 void runCommand(struct PackageManager* manager, struct ParsedAction* parsedAction) {
-	printf("####################\n");
-	printf("####################\n");
+	printf(DIVIDER);
+	printf(DIVIDER);
 	printf("%s\n", manager->name);
 
-	char *command;
+		char *command;
 	if (parsedAction->action == Clean) {
 		command = manager->cleanCommand;
 	} else if (parsedAction->action == Search) {
@@ -187,8 +203,6 @@ void runCommand(struct PackageManager* manager, struct ParsedAction* parsedActio
 			system(command);
 		}
 	}
-
-	printf("####################\n");
 }
 
 struct PackageManager* definePackageManager(
@@ -315,11 +329,13 @@ int main(int argc, char *argv[]) {
 		snap(parsedAction)
 	};
 
-	char installedCheck[INSTALL_CHECK_LENGTH];
-	for (long unsigned int i = 0; i < SIZE_OF(managers); i++) {
-		snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", managers[i]->name);
-		if (managers[i]->enabled && system(installedCheck) == 0) {
-			runCommand(managers[i], parsedAction);
+	if (parsedAction->action == Install) {
+		installPackage(managers, parsedAction);
+	} else {
+		for (long unsigned int i = 0; i < SIZE_OF(managers); i++) {
+			if (managers[i]->enabled && isInstalled(managers[i])) {
+				runCommand(managers[i], parsedAction);
+			}
 		}
 	}
 
