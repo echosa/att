@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SIZE_OF(x) (sizeof(x) / sizeof((x)[0]))
-
 #define NAME_LENGTH 10
 #define COMMAND_LENGTH 100
 
@@ -24,6 +22,7 @@ static const char MANAGERS_OPTION[] = "managers";
 static const char DIVIDER[] = "####################\n";
 
 enum action { Clean, Install, Search, SearchExact, Upgrade, Help, Invalid };
+static const int MANAGERS_COUNT = 5;
 
 /*********
 * Structs
@@ -175,15 +174,6 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
 	return parsedAction;
 }
 
-void installPackage(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
-	printf("Package installation not yet supported.\n");
-	//printf("Searching for package to install...\n");
-	// loop through all managers and do an exact search for the target
-	// parse and present results to user
-	// allow user to select result
-	// install the selected result
-}
-
 void runCommand(struct PackageManager* manager, struct ParsedAction* parsedAction) {
 	printf(DIVIDER);
 	printf(DIVIDER);
@@ -208,6 +198,31 @@ void runCommand(struct PackageManager* manager, struct ParsedAction* parsedActio
 			system(command);
 		}
 	}
+}
+
+void runCommandForAllManagers(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
+	for (int i = 0; i < MANAGERS_COUNT; i++) {
+		if (managers[i]->enabled && isInstalled(managers[i])) {
+			runCommand(managers[i], parsedAction);
+		}
+	}
+}
+
+void installPackage(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
+	printf("***Package installation not yet supported.***\n");
+
+	printf("Searching for package to install...\n");
+
+	// loop through all managers and do an exact search for the target
+	struct ParsedAction* searchExactAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
+	searchExactAction->action = SearchExact;
+	runCommandForAllManagers(managers, searchExactAction);
+
+	// parse and present results to user
+
+	// allow user to select result
+
+	// install the selected result
 }
 
 struct PackageManager* definePackageManager(
@@ -326,7 +341,7 @@ int main(int argc, char *argv[]) {
 		return EXIT_SUCCESS;
 	}
 
-	struct PackageManager *managers[] = {
+	struct PackageManager* managers[] = {
 		apt(parsedAction),
 		brew(parsedAction),
 		flatpak(parsedAction),
@@ -337,11 +352,7 @@ int main(int argc, char *argv[]) {
 	if (parsedAction->action == Install) {
 		installPackage(managers, parsedAction);
 	} else {
-		for (long unsigned int i = 0; i < SIZE_OF(managers); i++) {
-			if (managers[i]->enabled && isInstalled(managers[i])) {
-				runCommand(managers[i], parsedAction);
-			}
-		}
+		runCommandForAllManagers(managers, parsedAction);
 	}
 
 	return EXIT_SUCCESS;
