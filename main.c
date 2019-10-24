@@ -20,7 +20,7 @@ static const char MANAGERS_OPTION[] = "managers";
 
 static const char DIVIDER[] = "####################\n";
 
-enum action { Clean, Install, Search, SearchExact, Upgrade, Help, Invalid };
+enum Action { Clean, Install, Search, SearchExact, Upgrade, Help, Invalid };
 
 enum PackageManagers { Apt, Brew, Flatpak, Guix, Snap };
 static const int MANAGERS_COUNT = 5;
@@ -37,7 +37,7 @@ struct Managers {
 };
 
 struct ParsedAction {
-    enum action action;
+    enum Action action;
     char* target;
     bool debug;
     struct Managers* managers;
@@ -71,7 +71,7 @@ bool isInstalled(struct PackageManager* manager) {
     return system(installedCheck) == 0;
 }
 
-enum action parseAction(char* action, bool exactSearch) {
+enum Action parseAction(char* action, bool exactSearch) {
     if (strcmp(action, CLEAN_ACTION) == 0) {
         return Clean;
     } else if (strcmp(action, INSTALL_ACTION) == 0) {
