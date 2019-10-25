@@ -8,6 +8,7 @@
 #define COMMAND_LENGTH 100
 #define INSTALL_CHECK_LENGTH 50
 
+enum Action { Clean, Install, Search, SearchExact, Upgrade, Help, Invalid };
 static const char CLEAN_ACTION[] = "clean";
 static const char INSTALL_ACTION[] = "install";
 static const char SEARCH_ACTION[] = "search";
@@ -18,13 +19,6 @@ static const char EXACT_SEARCH_OPTION[] = "exact";
 static const char HELP_OPTION[] = "help";
 static const char MANAGERS_OPTION[] = "managers";
 
-static const char DIVIDER[] = "####################\n";
-
-enum Action { Clean, Install, Search, SearchExact, Upgrade, Help, Invalid };
-
-enum PackageManagers { Apt, Brew, Flatpak, Guix, Snap };
-static const int MANAGERS_COUNT = 5;
-
 static struct option long_options[] = {
     { DEBUG_OPTION, no_argument, NULL, 'd' },
     { EXACT_SEARCH_OPTION, no_argument, NULL, 'e' },
@@ -32,6 +26,16 @@ static struct option long_options[] = {
     { MANAGERS_OPTION, required_argument, NULL, 'm' },
     { NULL, 0, NULL, 0 }
 };
+
+static const char DIVIDER[] = "####################\n";
+
+enum PackageManagers { Apt, Brew, Flatpak, Guix, Snap };
+static const int MANAGERS_COUNT = 5;
+static const char APT[] = "apt";
+static const char BREW[] = "brew";
+static const char FLATPAK[] = "flatpak";
+static const char GUIX[] = "guix";
+static const char SNAP[] = "snap";
 
 /*********
 * Structs
@@ -95,15 +99,15 @@ enum Action parseAction(char* action, bool exactSearch) {
 }
 
 void setManager(struct ParsedAction* parsedAction, char* managerName) {
-    if (strcmp(managerName, "apt") == 0) {
+    if (strcmp(managerName, APT) == 0) {
         parsedAction->managers->apt = true;
-    } else if (strcmp(managerName, "brew") == 0) {
+    } else if (strcmp(managerName, BREW) == 0) {
         parsedAction->managers->flatpak = true;
-    } else if (strcmp(managerName, "flatpak") == 0) {
+    } else if (strcmp(managerName, FLATPAK) == 0) {
         parsedAction->managers->flatpak = true;
-    } else if (strcmp(managerName, "guix") == 0) {
+    } else if (strcmp(managerName, GUIX) == 0) {
         parsedAction->managers->flatpak = true;
-    } else if (strcmp(managerName, "snap") == 0) {
+    } else if (strcmp(managerName, SNAP) == 0) {
         parsedAction->managers->flatpak = true;
     }
 }
@@ -242,15 +246,15 @@ void runPackageSearch(struct PackageManager* managers[], struct ParsedAction* pa
 }
 
 int getManagerIndex(char* managerName) {
-    if (strcmp(managerName, "apt") == 0) {
+    if (strcmp(managerName, APT) == 0) {
         return Apt;
-    } else if (strcmp(managerName, "brew") == 0) {
+    } else if (strcmp(managerName, BREW) == 0) {
         return Brew;
-    } else if (strcmp(managerName, "flatpak") == 0) {
+    } else if (strcmp(managerName, FLATPAK) == 0) {
         return Flatpak;
-    } else if (strcmp(managerName, "guix") == 0) {
+    } else if (strcmp(managerName, GUIX) == 0) {
         return Guix;
-    } else if (strcmp(managerName, "snap") == 0) {
+    } else if (strcmp(managerName, SNAP) == 0) {
         return Snap;
     } else {
         return -1;
@@ -299,7 +303,7 @@ void executeAction(struct PackageManager* managers[], struct ParsedAction* parse
 }
 
 struct PackageManager* definePackageManager(
-    char *name,
+    const char name[],
     char *cleanCommand,
     char *installCommand,
     char *searchCommand,
@@ -321,88 +325,69 @@ struct PackageManager* definePackageManager(
 
 /*********
 * Package Managers
-*********/
+*n********/
 struct PackageManager* apt(struct ParsedAction* parsedAction) {
-    char name[] = "apt";
-    char cleanCommand[COMMAND_LENGTH];
+    char cleanCommand[] = "sudo apt autoremove";
     char installCommand[COMMAND_LENGTH];
+    snprintf(installCommand, COMMAND_LENGTH, "sudo apt install %s", parsedAction->target);
     char searchCommand[COMMAND_LENGTH];
+    snprintf(searchCommand, COMMAND_LENGTH, "apt search %s", parsedAction->target);
     char searchExactCommand[COMMAND_LENGTH];
-    char upgradeCommand[COMMAND_LENGTH];
+    snprintf(searchExactCommand, COMMAND_LENGTH, "apt search ^%s$", parsedAction->target);
+    char upgradeCommand[] = "sudo apt update; sudo apt upgrade";
 
-    snprintf(cleanCommand, COMMAND_LENGTH, "sudo %s autoremove", name);
-    snprintf(installCommand, COMMAND_LENGTH, "sudo %s install %s", name, parsedAction->target);
-    snprintf(searchCommand, COMMAND_LENGTH, "%s search %s", name, parsedAction->target);
-    snprintf(searchExactCommand, COMMAND_LENGTH, "%s search ^%s$", name, parsedAction->target);
-    snprintf(upgradeCommand, COMMAND_LENGTH, "sudo %s update; sudo %s upgrade", name, name);
-
-    return definePackageManager(name, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->apt);
+    return definePackageManager(APT, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->apt);
 }
 
 struct PackageManager* brew(struct ParsedAction* parsedAction) {
-    char name[] = "brew";
-    char cleanCommand[COMMAND_LENGTH];
+    char cleanCommand[] = "brew cleanup";
     char installCommand[COMMAND_LENGTH];
+    snprintf(installCommand, COMMAND_LENGTH, "brew install %s", parsedAction->target);
     char searchCommand[COMMAND_LENGTH];
+    snprintf(searchCommand, COMMAND_LENGTH, "brew search %s", parsedAction->target);
     char searchExactCommand[COMMAND_LENGTH];
-    char upgradeCommand[COMMAND_LENGTH];
+    snprintf(searchExactCommand, COMMAND_LENGTH, "brew search /^%s$/", parsedAction->target);
+    char upgradeCommand[] = "brew update; brew upgrade";
 
-    snprintf(cleanCommand, COMMAND_LENGTH, "%s cleanup", name);
-    snprintf(installCommand, COMMAND_LENGTH, "%s install %s", name, parsedAction->target);
-    snprintf(searchCommand, COMMAND_LENGTH, "%s search %s", name, parsedAction->target);
-    snprintf(searchExactCommand, COMMAND_LENGTH, "%s search /^%s$/", name, parsedAction->target);
-    snprintf(upgradeCommand, COMMAND_LENGTH, "%s update; %s upgrade", name, name);
-
-    return definePackageManager(name, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->brew);
+    return definePackageManager(BREW, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->brew);
 }
 
 struct PackageManager* flatpak(struct ParsedAction* parsedAction) {
-    char name[] = "flatpak";
-    char cleanCommand[COMMAND_LENGTH];
+    char cleanCommand[] = "flatpak uninstall --unused";
     char installCommand[COMMAND_LENGTH];
+    snprintf(installCommand, COMMAND_LENGTH, "flatpak install %s", parsedAction->target);
     char searchCommand[COMMAND_LENGTH];
+    snprintf(searchCommand, COMMAND_LENGTH, "flatpak search %s", parsedAction->target);
     char searchExactCommand[COMMAND_LENGTH];
-    char upgradeCommand[COMMAND_LENGTH];
+    snprintf(searchExactCommand, COMMAND_LENGTH, "flatpak search %s", parsedAction->target);
+    char upgradeCommand[] = "flatpak update";
 
-    snprintf(cleanCommand, COMMAND_LENGTH, "%s uninstall --unused", name);
-    snprintf(installCommand, COMMAND_LENGTH, "%s install %s", name, parsedAction->target);
-    snprintf(searchCommand, COMMAND_LENGTH, "%s search %s", name, parsedAction->target);
-    snprintf(searchExactCommand, COMMAND_LENGTH, "%s search %s", name, parsedAction->target);
-    snprintf(upgradeCommand, COMMAND_LENGTH, "%s update", name);
-
-    return definePackageManager(name, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->flatpak);
+    return definePackageManager(FLATPAK, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->flatpak);
 }
 
 struct PackageManager* guix(struct ParsedAction* parsedAction) {
-    char name[] = "guix";
-    char cleanCommand[COMMAND_LENGTH];
+    char cleanCommand[] = "guix package --delete-generations; guix gc --collect-garbage; guix gc --list-dead";
     char installCommand[COMMAND_LENGTH];
+    snprintf(installCommand, COMMAND_LENGTH, "guix install %s", parsedAction->target);
     char searchCommand[COMMAND_LENGTH];
+    snprintf(searchCommand, COMMAND_LENGTH, "guix package -A %s", parsedAction->target);
     char searchExactCommand[COMMAND_LENGTH];
-    char upgradeCommand[COMMAND_LENGTH];
+    snprintf(searchExactCommand, COMMAND_LENGTH, "guix package -A ^%s$", parsedAction->target);
+    char upgradeCommand[] = "guix pull; guix package -u";
 
-    snprintf(cleanCommand, COMMAND_LENGTH, "%s package --delete-generations; %s gc --collect-garbage; %s gc --list-dead", name, name, name);
-    snprintf(installCommand, COMMAND_LENGTH, "%s install %s", name, parsedAction->target);
-    snprintf(searchCommand, COMMAND_LENGTH, "%s package -A %s", name, parsedAction->target);
-    snprintf(searchExactCommand, COMMAND_LENGTH, "%s package -A ^%s$", name, parsedAction->target);
-    snprintf(upgradeCommand, COMMAND_LENGTH, "%s pull; %s package -u", name, name);
-
-    return definePackageManager(name, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->guix);
+    return definePackageManager(GUIX, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->guix);
 }
 
 struct PackageManager* snap(struct ParsedAction* parsedAction) {
-    char name[] = "snap";
     char installCommand[COMMAND_LENGTH];
+    snprintf(installCommand, COMMAND_LENGTH, "snap install %s", parsedAction->target);
     char searchCommand[COMMAND_LENGTH];
+    snprintf(searchCommand, COMMAND_LENGTH, "snap find %s", parsedAction->target);
     char searchExactCommand[COMMAND_LENGTH];
-    char upgradeCommand[COMMAND_LENGTH];
+    snprintf(searchExactCommand, COMMAND_LENGTH, "snap find %s", parsedAction->target);
+    char upgradeCommand[] = "sudo snap refresh";
 
-    snprintf(installCommand, COMMAND_LENGTH, "%s install %s", name, parsedAction->target);
-    snprintf(searchCommand, COMMAND_LENGTH, "%s find %s", name, parsedAction->target);
-    snprintf(searchExactCommand, COMMAND_LENGTH, "%s find %s", name, parsedAction->target);
-    snprintf(upgradeCommand, COMMAND_LENGTH, "sudo %s refresh", name);
-
-    return definePackageManager(name, "", installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->snap);
+    return definePackageManager(SNAP, "", installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->snap);
 }
 
 /*********
