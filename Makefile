@@ -7,4 +7,4 @@ install:
 uninstall:
 	rm /usr/local/bin/att
 check-syntax:
-	clang -o nul -S ${CHK_SOURCES}
+	clang -o /dev/null -S ${CHK_SOURCES}

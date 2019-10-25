@@ -155,7 +155,7 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
                     parsedAction->managers->flatpak = true;
                 }
             }
-
+            break;
         }
     }
 
