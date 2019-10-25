@@ -8,7 +8,7 @@
 #define COMMAND_LENGTH 100
 #define INSTALL_CHECK_LENGTH 50
 
-enum Action { Clean, Install, Search, SearchExact, Upgrade, Help, Invalid };
+enum Action { Clean, Install, Search, SearchExact, Upgrade, Help, InvalidAction };
 static const char CLEAN_ACTION[] = "clean";
 static const char INSTALL_ACTION[] = "install";
 static const char SEARCH_ACTION[] = "search";
@@ -29,7 +29,7 @@ static struct option long_options[] = {
 
 static const char DIVIDER[] = "####################\n";
 
-enum PackageManagers { Apt, Brew, Flatpak, Guix, Snap };
+enum Manager { Apt, Brew, Flatpak, Guix, Snap, InvalidManager };
 static const int MANAGERS_COUNT = 5;
 static const char APT[] = "apt";
 static const char BREW[] = "brew";
@@ -94,7 +94,7 @@ enum Action parseAction(char* action, bool exactSearch) {
     } else if (strcmp(action, UPGRADE_ACTION) == 0) {
         return Upgrade;
     } else {
-        return Invalid;
+        return InvalidAction;
     }
 }
 
@@ -128,7 +128,7 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
     struct Managers* managers = (struct Managers*)(malloc(sizeof(struct Managers)));
     setAllManagers(managers, true);
     parsedAction->managers = managers;
-    parsedAction->action = Invalid;
+    parsedAction->action = InvalidAction;
     parsedAction->target = NULL;
     parsedAction->exact = false;
     parsedAction->debug = false;
@@ -165,7 +165,7 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
     }
 
     if (optind >= argc) {
-        parsedAction->action = Invalid;
+        parsedAction->action = InvalidAction;
 
         return parsedAction;
     }
@@ -178,7 +178,7 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
     }
 
     if ((parsedAction->action == Search || parsedAction->action == SearchExact || parsedAction->action == Install) && parsedAction->target == NULL) {
-        parsedAction->action = Invalid;
+        parsedAction->action = InvalidAction;
     }
 
     return parsedAction;
@@ -206,6 +206,7 @@ char* getCommandForAction(struct PackageManager* manager, struct ParsedAction* p
     }
 
 }
+
 void runCommand(struct PackageManager* manager, struct ParsedAction* parsedAction) {
     printf(DIVIDER);
     printf(DIVIDER);
@@ -245,7 +246,7 @@ void runPackageSearch(struct PackageManager* managers[], struct ParsedAction* pa
     free(searchAction);
 }
 
-int getManagerIndex(char* managerName) {
+enum Manager getManagerIndex(char* managerName) {
     if (strcmp(managerName, APT) == 0) {
         return Apt;
     } else if (strcmp(managerName, BREW) == 0) {
@@ -257,7 +258,7 @@ int getManagerIndex(char* managerName) {
     } else if (strcmp(managerName, SNAP) == 0) {
         return Snap;
     } else {
-        return -1;
+        return InvalidManager;
     }
 }
 
@@ -402,7 +403,7 @@ int main(int argc, char *argv[]) {
 
     struct ParsedAction* parsedAction = parseOptions(argc, argv);
 
-    if (parsedAction->action == Invalid) {
+    if (parsedAction->action == InvalidAction) {
         printUsage(argv[0]);
 
         return EXIT_FAILURE;
