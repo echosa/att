@@ -94,7 +94,7 @@ enum Action parseAction(char* action, bool exactSearch) {
     }
 }
 
-void setManager(struct ParsedAction* parsedAction, char managerName[]) {
+void setManager(struct ParsedAction* parsedAction, char* managerName) {
     if (strcmp(managerName, "apt") == 0) {
         parsedAction->managers->apt = true;
     } else if (strcmp(managerName, "brew") == 0) {
@@ -180,32 +180,45 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
     return parsedAction;
 }
 
+char* getCommandForAction(struct PackageManager* manager, struct ParsedAction* parsedAction) {
+    switch (parsedAction->action) {
+    case Clean:
+        return manager->cleanCommand;
+        break;
+    case Install:
+        return manager->installCommand;
+        break;
+    case Search:
+        return manager->searchCommand;
+        break;
+    case SearchExact:
+        return manager->searchExactCommand;
+        break;
+    case Upgrade:
+        return manager->upgradeCommand;
+        break;
+    default:
+        return "";
+    }
+
+}
 void runCommand(struct PackageManager* manager, struct ParsedAction* parsedAction) {
     printf(DIVIDER);
     printf(DIVIDER);
     printf("%s\n", manager->name);
     printf(DIVIDER);
 
-    char *command;
-    if (parsedAction->action == Clean) {
-        command = manager->cleanCommand;
-    } else if (parsedAction->action == Install) {
-        command = manager->installCommand;
-    } else if (parsedAction->action == Search) {
-        command = manager->searchCommand;
-    } else if (parsedAction->action == SearchExact) {
-        command = manager->searchExactCommand;
-    } else if (parsedAction->action == Upgrade) {
-        command = manager->upgradeCommand;
-    }
+    char *command = getCommandForAction(manager, parsedAction);
 
     if (strcmp(command, "") == 0) {
         printf("No relevant command for %s\n", manager->name);
-    } else {
-        printf("%s\n", command);
-        if (!parsedAction->debug) {
-            system(command);
-        }
+
+        return;
+    }
+
+    printf("%s\n", command);
+    if (!parsedAction->debug) {
+        system(command);
     }
 }
 
@@ -217,10 +230,7 @@ void runCommandForAllManagers(struct PackageManager* managers[], struct ParsedAc
     }
 }
 
-void installPackage(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
-    printf("Searching for package to install...\n");
-
-    // loop through all managers and do an exact search for the target
+void runPackageSearch(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
     struct ParsedAction* searchAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
     if (parsedAction->exact) {
         searchAction->action = SearchExact;
@@ -228,35 +238,47 @@ void installPackage(struct PackageManager* managers[], struct ParsedAction* pars
         searchAction->action = Search;
     }        
     runCommandForAllManagers(managers, searchAction);
+    free(searchAction);
+}
 
-    // allow user to select result
-    printf(DIVIDER);
-    printf(DIVIDER);
+int getManagerIndex(char* managerName) {
+    if (strcmp(managerName, "apt") == 0) {
+        return Apt;
+    } else if (strcmp(managerName, "brew") == 0) {
+        return Brew;
+    } else if (strcmp(managerName, "flatpak") == 0) {
+        return Flatpak;
+    } else if (strcmp(managerName, "guix") == 0) {
+        return Guix;
+    } else if (strcmp(managerName, "snap") == 0) {
+        return Snap;
+    } else {
+        return -1;
+    }
+}
 
-    printf("Which manager would you like to use? ");
+int promptForManager() {
     char managerChoice[COMMAND_LENGTH];
     scanf("%s", managerChoice);
+
+    return getManagerIndex(managerChoice);
+}
+
+void installPackage(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
+    printf("Searching for package to install...\n");
+    runPackageSearch(managers, parsedAction);
+
+    printf(DIVIDER);
+    printf(DIVIDER);
+    printf("Which manager would you like to use? ");
+    int managerIndex = promptForManager();
+    if (managerIndex == -1) {
+        printf("Package manager found.\n");
+    }
 
     printf("Which package would you like to install? ");
     char packageChoice[COMMAND_LENGTH];
     scanf("%s", packageChoice);
-
-    // install the selected result
-    int managerIndex;
-    if (strcmp(managerChoice, "apt") == 0) {
-        managerIndex = Apt;
-    } else if (strcmp(managerChoice, "brew") == 0) {
-        managerIndex = Brew;
-    } else if (strcmp(managerChoice, "flatpak") == 0) {
-        managerIndex = Flatpak;
-    } else if (strcmp(managerChoice, "guix") == 0) {
-        managerIndex = Guix;
-    } else if (strcmp(managerChoice, "snap") == 0) {
-        managerIndex = Snap;
-    } else {
-        printf("No %s package manager found.\n", managerChoice);
-        return;
-    }
 
     printf("Installing %s from %s...\n", packageChoice, managers[managerIndex]->name);
     runCommand(managers[managerIndex], parsedAction);
