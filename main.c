@@ -86,14 +86,26 @@ enum Action parseAction(char* action, bool exactSearch) {
     }
 }
 
-struct Managers* setAllManagers() {
-    struct Managers* managers = (struct Managers*)(malloc(sizeof(struct Managers)));
-    managers->apt = true;
-    managers->brew = true;
-    managers->flatpak = true;
-    managers->guix = true;
-    managers->snap = true;
-    return managers;
+void setManager(struct ParsedAction* parsedAction, char managerName[]) {
+    if (strcmp(managerName, "apt") == 0) {
+        parsedAction->managers->apt = true;
+    } else if (strcmp(managerName, "brew") == 0) {
+        parsedAction->managers->flatpak = true;
+    } else if (strcmp(managerName, "flatpak") == 0) {
+        parsedAction->managers->flatpak = true;
+    } else if (strcmp(managerName, "guix") == 0) {
+        parsedAction->managers->flatpak = true;
+    } else if (strcmp(managerName, "snap") == 0) {
+        parsedAction->managers->flatpak = true;
+    }
+}
+
+void setAllManagers(struct Managers* managers, bool enabled) {
+    managers->apt = enabled;
+    managers->brew = enabled;
+    managers->flatpak = enabled;
+    managers->guix = enabled;
+    managers->snap = enabled;
 }
 
 struct ParsedAction* parseOptions(int argc, char *argv[]) {
@@ -101,7 +113,9 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
     char *token;
 
     struct ParsedAction* parsedAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
-    parsedAction->managers = setAllManagers();
+    struct Managers* managers = (struct Managers*)(malloc(sizeof(struct Managers)));
+    setAllManagers(managers, true);
+    parsedAction->managers = managers;
     parsedAction->action = Invalid;
     parsedAction->target = NULL;
     parsedAction->exact = false;
@@ -136,24 +150,9 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
             return parsedAction;
 
         case 'm':
-            parsedAction->managers->apt = false;
-            parsedAction->managers->brew = false;
-            parsedAction->managers->flatpak = false;
-            parsedAction->managers->guix = false;
-            parsedAction->managers->snap = false;
-
+            setAllManagers(parsedAction->managers, false);
             while ((token = strsep(&optarg, ",")) != NULL) {
-                if (strcmp(token, "apt") == 0) {
-                    parsedAction->managers->apt = true;
-                } else if (strcmp(token, "brew") == 0) {
-                    parsedAction->managers->flatpak = true;
-                } else if (strcmp(token, "flatpak") == 0) {
-                    parsedAction->managers->flatpak = true;
-                } else if (strcmp(token, "guix") == 0) {
-                    parsedAction->managers->flatpak = true;
-                } else if (strcmp(token, "snap") == 0) {
-                    parsedAction->managers->flatpak = true;
-                }
+                setManager(parsedAction, token);
             }
             break;
         }
