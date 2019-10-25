@@ -148,6 +148,7 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
 
         case 'h':
             parsedAction->action = Help;
+
             return parsedAction;
 
         case 'm':
@@ -161,6 +162,7 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
 
     if (optind >= argc) {
         parsedAction->action = Invalid;
+
         return parsedAction;
     }
 
