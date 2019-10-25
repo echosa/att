@@ -25,6 +25,14 @@ enum Action { Clean, Install, Search, SearchExact, Upgrade, Help, Invalid };
 enum PackageManagers { Apt, Brew, Flatpak, Guix, Snap };
 static const int MANAGERS_COUNT = 5;
 
+static struct option long_options[] = {
+    { DEBUG_OPTION, no_argument, NULL, 'd' },
+    { EXACT_SEARCH_OPTION, no_argument, NULL, 'e' },
+    { HELP_OPTION, no_argument, NULL, 'h' },
+    { MANAGERS_OPTION, required_argument, NULL, 'm' },
+    { NULL, 0, NULL, 0 }
+};
+
 /*********
 * Structs
 *********/
@@ -123,13 +131,6 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
 
     while (1) {
         int option_index = 0;
-        static struct option long_options[] = {
-            { DEBUG_OPTION, no_argument, NULL, 'd' },
-            { EXACT_SEARCH_OPTION, no_argument, NULL, 'e' },
-            { HELP_OPTION, no_argument, NULL, 'h' },
-            { MANAGERS_OPTION, required_argument, NULL, 'm' },
-            { NULL, 0, NULL, 0 }
-        };
 
         c = getopt_long(argc, argv, "dehm",  long_options, &option_index);
         if (c == -1) {
