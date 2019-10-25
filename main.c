@@ -120,11 +120,7 @@ void setAllManagers(struct Managers* managers, bool enabled) {
     managers->snap = enabled;
 }
 
-struct ParsedAction* parseOptions(int argc, char *argv[]) {
-    int c;
-    char *token;
-
-    struct ParsedAction* parsedAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
+void setParsedActionDefaults(struct ParsedAction* parsedAction) {
     struct Managers* managers = (struct Managers*)(malloc(sizeof(struct Managers)));
     setAllManagers(managers, true);
     parsedAction->managers = managers;
@@ -132,6 +128,14 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
     parsedAction->target = NULL;
     parsedAction->exact = false;
     parsedAction->debug = false;
+}
+
+struct ParsedAction* parseOptions(int argc, char *argv[]) {
+    int c;
+    char *token;
+
+    struct ParsedAction* parsedAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
+    setParsedActionDefaults(parsedAction);
 
     while (1) {
         int option_index = 0;
@@ -173,6 +177,7 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
     if (optind < argc) {
         parsedAction->action = parseAction(argv[optind++], parsedAction->exact);
     }
+
     if (optind < argc) {
         parsedAction->target = argv[optind++];
     }
@@ -204,7 +209,6 @@ char* getCommandForAction(struct PackageManager* manager, struct ParsedAction* p
     default:
         return "";
     }
-
 }
 
 void runCommand(struct PackageManager* manager, struct ParsedAction* parsedAction) {
