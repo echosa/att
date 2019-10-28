@@ -13,6 +13,7 @@
 #include "io.h"
 #include "package_manager.h"
 #include "requested_action.h"
+#include "supported_manager.h"
 
 static const char DEBUG_OPTION[] = "debug";
 static const char EXACT_SEARCH_OPTION[] = "exact";
@@ -26,9 +27,6 @@ static struct option long_options[] = {
     { MANAGERS_OPTION, required_argument, NULL, 'm' },
     { NULL, 0, NULL, 0 }
 };
-
-enum Manager { Apt, Brew, Flatpak, Guix, Snap, InvalidManager };
-static const int MANAGERS_COUNT = 5;
 
 RequestedAction* parseOptions(int argc, char *argv[]) {
     int c;
@@ -143,22 +141,6 @@ void runPackageSearch(PackageManager* managers[], RequestedAction* requestedActi
     }        
     runCommandForAllManagers(managers, searchAction);
     free(searchAction);
-}
-
-enum Manager getManagerIndex(char* managerName) {
-    if (strcmp(managerName, APT) == 0) {
-        return Apt;
-    } else if (strcmp(managerName, BREW) == 0) {
-        return Brew;
-    } else if (strcmp(managerName, FLATPAK) == 0) {
-        return Flatpak;
-    } else if (strcmp(managerName, GUIX) == 0) {
-        return Guix;
-    } else if (strcmp(managerName, SNAP) == 0) {
-        return Snap;
-    } else {
-        return InvalidManager;
-    }
 }
 
 int promptForManager() {
