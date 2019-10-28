@@ -29,3 +29,9 @@ $ att clean --managers=apt,flatpak # Only clean packages in apt and flatpak
 ```
 
 Note: Only package managers that are installed on your system will attempt to run, in order to reduce output and noise.
+
+## Tests
+Tests can be run if [cmocka](https://cmocka.org) is installed.
+```
+$ make tests
+```
