@@ -1,14 +1,6 @@
-#ifndef MAIN_H_
-#define MAIN_H_
-
 #include <stdbool.h>
 #include <string.h>
-
-enum Action { Clean, Install, Search, SearchExact, Upgrade, Help, InvalidAction };
-static const char CLEAN_ACTION[] = "clean";
-static const char INSTALL_ACTION[] = "install";
-static const char SEARCH_ACTION[] = "search";
-static const char UPGRADE_ACTION[] = "upgrade";
+#include "action.h"
 
 enum Action parseAction(char* action, bool exactSearch) {
     if (strcmp(action, CLEAN_ACTION) == 0) {
@@ -23,5 +15,3 @@ enum Action parseAction(char* action, bool exactSearch) {
         return InvalidAction;
     }
 }
-
-#endif

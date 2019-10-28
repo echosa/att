@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "main.h"
+#include "action.h"
 #include "managers.h"
 #include "commands.h"
 #include "apt.h"
@@ -12,6 +12,7 @@
 #include "snap.h"
 #include "io.h"
 #include "package_manager.h"
+#include "requested_action.h"
 
 static const char DEBUG_OPTION[] = "debug";
 static const char EXACT_SEARCH_OPTION[] = "exact";
@@ -29,50 +30,11 @@ static struct option long_options[] = {
 enum Manager { Apt, Brew, Flatpak, Guix, Snap, InvalidManager };
 static const int MANAGERS_COUNT = 5;
 
-/*********
-* Structs
-*********/
-typedef struct ParsedAction {
-    Managers* managers;
-    enum Action action;
-    char* target;
-    bool exact;
-    bool debug;
-} ParsedAction;
-
-/*********
-* Functions
-*********/
-void setManager(ParsedAction* parsedAction, char* managerName) {
-    if (strcmp(managerName, APT) == 0) {
-        setApt(parsedAction->managers, true);
-    } else if (strcmp(managerName, BREW) == 0) {
-        setBrew(parsedAction->managers, true);
-    } else if (strcmp(managerName, FLATPAK) == 0) {
-        setFlatpak(parsedAction->managers, true);
-    } else if (strcmp(managerName, GUIX) == 0) {
-        setGuix(parsedAction->managers, true);
-    } else if (strcmp(managerName, SNAP) == 0) {
-        setSnap(parsedAction->managers, true);
-    }
-}
-
-void setParsedActionDefaults(ParsedAction* parsedAction) {
-    Managers* managers = managers_new();
-    setAllManagers(managers, true);
-    parsedAction->managers = managers;
-    parsedAction->action = InvalidAction;
-    parsedAction->target = NULL;
-    parsedAction->exact = false;
-    parsedAction->debug = false;
-}
-
-ParsedAction* parseOptions(int argc, char *argv[]) {
+RequestedAction* parseOptions(int argc, char *argv[]) {
     int c;
     char *token;
 
-    ParsedAction* parsedAction = (ParsedAction*)(malloc(sizeof(ParsedAction)));
-    setParsedActionDefaults(parsedAction);
+    RequestedAction* requestedAction = requested_action_new();
 
     while (1) {
         int option_index = 0;
@@ -84,50 +46,51 @@ ParsedAction* parseOptions(int argc, char *argv[]) {
 
         switch (c) {
         case 'd':
-            parsedAction->debug = true;
+            enableDebug(requestedAction);
             break;
 
         case 'e':
-            parsedAction->exact = true;
+            enableExactSearch(requestedAction);
             break;
 
         case 'h':
-            parsedAction->action = Help;
+            setRequestedActionAction(requestedAction, Help);
 
-            return parsedAction;
+            return requestedAction;
 
         case 'm':
-            setAllManagers(parsedAction->managers, false);
+            setAllManagers(getRequestedActionManagers(requestedAction), false);
             while ((token = strsep(&optarg, ",")) != NULL) {
-                setManager(parsedAction, token);
+                enableManagerForRequestedAction(requestedAction, token);
             }
             break;
         }
     }
 
     if (optind >= argc) {
-        parsedAction->action = InvalidAction;
+        setRequestedActionAction(requestedAction, InvalidAction);
 
-        return parsedAction;
+        return requestedAction;
     }
 
     if (optind < argc) {
-        parsedAction->action = parseAction(argv[optind++], parsedAction->exact);
+        setRequestedActionAction(requestedAction, parseAction(argv[optind++], isExactSearch(requestedAction)));
     }
 
     if (optind < argc) {
-        parsedAction->target = argv[optind++];
+        setRequestedActionTarget(requestedAction, argv[optind++]);
     }
 
-    if ((parsedAction->action == Search || parsedAction->action == SearchExact || parsedAction->action == Install) && parsedAction->target == NULL) {
-        parsedAction->action = InvalidAction;
+    enum Action action = getRequestedActionAction(requestedAction);
+    if ((action == Search || action == SearchExact || action == Install) && getRequestedActionTarget(requestedAction) == NULL) {
+        setRequestedActionAction(requestedAction, InvalidAction);
     }
 
-    return parsedAction;
+    return requestedAction;
 }
 
-char* getCommandForAction(PackageManager* manager, ParsedAction* parsedAction) {
-    switch (parsedAction->action) {
+char* getCommandForAction(PackageManager* manager, RequestedAction* requestedAction) {
+    switch (getRequestedActionAction(requestedAction)) {
     case Clean:
         return getPackageManagerCleanCommand(manager);
     case Install:
@@ -143,13 +106,13 @@ char* getCommandForAction(PackageManager* manager, ParsedAction* parsedAction) {
     }
 }
 
-void runCommand(PackageManager* manager, ParsedAction* parsedAction) {
+void runCommand(PackageManager* manager, RequestedAction* requestedAction) {
     printf(DIVIDER);
     printf(DIVIDER);
     printf("%s\n", getPackageManagerName(manager));
     printf(DIVIDER);
 
-    char *command = getCommandForAction(manager, parsedAction);
+    char *command = getCommandForAction(manager, requestedAction);
 
     if (strcmp(command, "") == 0) {
         printf("No relevant command for %s\n", getPackageManagerName(manager));
@@ -158,25 +121,25 @@ void runCommand(PackageManager* manager, ParsedAction* parsedAction) {
     }
 
     printf("%s\n", command);
-    if (!parsedAction->debug) {
+    if (!isDebug(requestedAction)) {
         system(command);
     }
 }
 
-void runCommandForAllManagers(PackageManager* managers[], ParsedAction* parsedAction) {
+void runCommandForAllManagers(PackageManager* managers[], RequestedAction* requestedAction) {
     for (int i = 0; i < MANAGERS_COUNT; i++) {
         if (isPackageManagerEnabled(managers[i]) && isPackageManagerInstalled(managers[i])) {
-            runCommand(managers[i], parsedAction);
+            runCommand(managers[i], requestedAction);
         }
     }
 }
 
-void runPackageSearch(PackageManager* managers[], ParsedAction* parsedAction) {
-    ParsedAction* searchAction = (ParsedAction*)(malloc(sizeof(ParsedAction)));
-    if (parsedAction->exact) {
-        searchAction->action = SearchExact;
+void runPackageSearch(PackageManager* managers[], RequestedAction* requestedAction) {
+    RequestedAction* searchAction = requested_action_new();
+    if (isExactSearch(requestedAction)) {
+        setRequestedActionAction(searchAction, SearchExact);
     } else {
-        searchAction->action = Search;
+        setRequestedActionAction(searchAction, Search);
     }        
     runCommandForAllManagers(managers, searchAction);
     free(searchAction);
@@ -205,9 +168,9 @@ int promptForManager() {
     return getManagerIndex(managerChoice);
 }
 
-void installPackage(PackageManager* managers[], ParsedAction* parsedAction) {
+void installPackage(PackageManager* managers[], RequestedAction* requestedAction) {
     printf("Searching for package to install...\n");
-    runPackageSearch(managers, parsedAction);
+    runPackageSearch(managers, requestedAction);
 
     printf(DIVIDER);
     printf(DIVIDER);
@@ -222,18 +185,18 @@ void installPackage(PackageManager* managers[], ParsedAction* parsedAction) {
     scanf("%s", packageChoice);
 
     printf("Installing %s from %s...\n", packageChoice, getPackageManagerName(managers[managerIndex]));
-    runCommand(managers[managerIndex], parsedAction);
+    runCommand(managers[managerIndex], requestedAction);
 }
 
-void executeAction(PackageManager* managers[], ParsedAction* parsedAction) {
-    if (parsedAction->action == Install) {
-        installPackage(managers, parsedAction);
+void executeAction(PackageManager* managers[], RequestedAction* requestedAction) {
+    if (getRequestedActionAction(requestedAction) == Install) {
+        installPackage(managers, requestedAction);
     } else {
-        runCommandForAllManagers(managers, parsedAction);
+        runCommandForAllManagers(managers, requestedAction);
     }
 
-    free(parsedAction->managers);
-    free(parsedAction);
+    free(getRequestedActionManagers(requestedAction));
+    free(requestedAction);
     for (int i = 0; i < MANAGERS_COUNT; i++) {
         free(managers[i]);
     }
@@ -242,24 +205,24 @@ void executeAction(PackageManager* managers[], ParsedAction* parsedAction) {
 /*********
 * Package Managers
 *********/
-PackageManager* apt(ParsedAction* parsedAction) {
-    return definePackageManager(APT, getAptCommands(parsedAction->target), getApt(parsedAction->managers));
+PackageManager* apt(RequestedAction* requestedAction) {
+    return definePackageManager(APT, getAptCommands(getRequestedActionTarget(requestedAction)), getApt(getRequestedActionManagers(requestedAction)));
 }
 
-PackageManager* brew(ParsedAction* parsedAction) {
-    return definePackageManager(BREW, getBrewCommands(parsedAction->target), getBrew(parsedAction->managers));
+PackageManager* brew(RequestedAction* requestedAction) {
+    return definePackageManager(BREW, getBrewCommands(getRequestedActionTarget(requestedAction)), getBrew(getRequestedActionManagers(requestedAction)));
 }
 
-PackageManager* flatpak(ParsedAction* parsedAction) {
-    return definePackageManager(FLATPAK, getFlatpakCommands(parsedAction->target), getFlatpak(parsedAction->managers));
+PackageManager* flatpak(RequestedAction* requestedAction) {
+    return definePackageManager(FLATPAK, getFlatpakCommands(getRequestedActionTarget(requestedAction)), getFlatpak(getRequestedActionManagers(requestedAction)));
 }
 
-PackageManager* guix(ParsedAction* parsedAction) {
-    return definePackageManager(GUIX, getGuixCommands(parsedAction->target), getGuix(parsedAction->managers));
+PackageManager* guix(RequestedAction* requestedAction) {
+    return definePackageManager(GUIX, getGuixCommands(getRequestedActionTarget(requestedAction)), getGuix(getRequestedActionManagers(requestedAction)));
 }
 
-PackageManager* snap(ParsedAction* parsedAction) {
-    return definePackageManager(SNAP, getSnapCommands(parsedAction->target), getSnap(parsedAction->managers));
+PackageManager* snap(RequestedAction* requestedAction) {
+    return definePackageManager(SNAP, getSnapCommands(getRequestedActionTarget(requestedAction)), getSnap(getRequestedActionManagers(requestedAction)));
 }
 
 /*********
@@ -272,28 +235,28 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    ParsedAction* parsedAction = parseOptions(argc, argv);
+    RequestedAction* requestedAction = parseOptions(argc, argv);
 
-    if (parsedAction->action == InvalidAction) {
+    if (getRequestedActionAction(requestedAction) == InvalidAction) {
         printUsage(argv[0]);
 
         return EXIT_FAILURE;
     }
 
-    if (parsedAction->action == Help) {
+    if (getRequestedActionAction(requestedAction) == Help) {
         printUsage(argv[0]);
 
         return EXIT_SUCCESS;
     }
 
     PackageManager* managers[] = {
-        apt(parsedAction),
-        brew(parsedAction),
-        flatpak(parsedAction),
-        guix(parsedAction),
-        snap(parsedAction)
+        apt(requestedAction),
+        brew(requestedAction),
+        flatpak(requestedAction),
+        guix(requestedAction),
+        snap(requestedAction)
     };
-    executeAction(managers, parsedAction);
+    executeAction(managers, requestedAction);
 
     return EXIT_SUCCESS;
 }
