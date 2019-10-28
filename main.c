@@ -15,26 +15,6 @@
 #include "supported_manager.h"
 #include "run.h"
 
-PackageManager* apt(RequestedAction* requestedAction) {
-    return definePackageManager(APT, getAptCommands(getRequestedActionTarget(requestedAction)), getApt(getRequestedActionManagers(requestedAction)));
-}
-
-PackageManager* brew(RequestedAction* requestedAction) {
-    return definePackageManager(BREW, getBrewCommands(getRequestedActionTarget(requestedAction)), getBrew(getRequestedActionManagers(requestedAction)));
-}
-
-PackageManager* flatpak(RequestedAction* requestedAction) {
-    return definePackageManager(FLATPAK, getFlatpakCommands(getRequestedActionTarget(requestedAction)), getFlatpak(getRequestedActionManagers(requestedAction)));
-}
-
-PackageManager* guix(RequestedAction* requestedAction) {
-    return definePackageManager(GUIX, getGuixCommands(getRequestedActionTarget(requestedAction)), getGuix(getRequestedActionManagers(requestedAction)));
-}
-
-PackageManager* snap(RequestedAction* requestedAction) {
-    return definePackageManager(SNAP, getSnapCommands(getRequestedActionTarget(requestedAction)), getSnap(getRequestedActionManagers(requestedAction)));
-}
-
 int main(int argc, char *argv[]) {
     if (argc < 2) {
         printUsage(argv[0]);
