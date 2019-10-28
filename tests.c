@@ -6,31 +6,31 @@
 
 static void clean_action_should_parse_correctly(void **state) {
     (void) state; /* unused */
-    enum Action action = parseAction(CLEAN_ACTION, false);
+    enum Action action = parseAction((char*) CLEAN_ACTION, false);
     assert_int_equal(action, Clean);
 }
 
 static void install_action_should_parse_correctly(void **state) {
     (void) state; /* unused */
-    enum Action action = parseAction(INSTALL_ACTION, false);
+    enum Action action = parseAction((char*) INSTALL_ACTION, false);
     assert_int_equal(action, Install);
 }
 
 static void search_action_should_parse_correctly(void **state) {
     (void) state; /* unused */
-    enum Action action = parseAction(SEARCH_ACTION, false);
+    enum Action action = parseAction((char*) SEARCH_ACTION, false);
     assert_int_equal(action, Search);
 }
 
 static void search_exact_action_should_parse_correctly(void **state) {
     (void) state; /* unused */
-    enum Action action = parseAction(SEARCH_ACTION, true);
+    enum Action action = parseAction((char*) SEARCH_ACTION, true);
     assert_int_equal(action, SearchExact);
 }
 
 static void upgrade_action_should_parse_correctly(void **state) {
     (void) state; /* unused */
-    enum Action action = parseAction(UPGRADE_ACTION, false);
+    enum Action action = parseAction((char*) UPGRADE_ACTION, false);
     assert_int_equal(action, Upgrade);
 }
 
