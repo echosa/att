@@ -11,9 +11,7 @@
 #include "guix.h"
 #include "snap.h"
 #include "io.h"
-
-#define NAME_LENGTH 10
-#define INSTALL_CHECK_LENGTH 50
+#include "package_manager.h"
 
 static const char DEBUG_OPTION[] = "debug";
 static const char EXACT_SEARCH_OPTION[] = "exact";
@@ -42,26 +40,9 @@ typedef struct ParsedAction {
     bool debug;
 } ParsedAction;
 
-typedef struct PackageManager {
-    char name[NAME_LENGTH];
-    char cleanCommand[COMMAND_LENGTH];
-    char installCommand[COMMAND_LENGTH];
-    char searchCommand[COMMAND_LENGTH];
-    char searchExactCommand[COMMAND_LENGTH];
-    char upgradeCommand[COMMAND_LENGTH];
-    bool enabled;
-} PackageManager;
-
 /*********
 * Functions
 *********/
-bool isInstalled(PackageManager* manager) {
-    char installedCheck[INSTALL_CHECK_LENGTH];
-    snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", manager->name);
-
-    return system(installedCheck) == 0;
-}
-
 void setManager(ParsedAction* parsedAction, char* managerName) {
     if (strcmp(managerName, APT) == 0) {
         setApt(parsedAction->managers, true);
@@ -148,20 +129,15 @@ ParsedAction* parseOptions(int argc, char *argv[]) {
 char* getCommandForAction(PackageManager* manager, ParsedAction* parsedAction) {
     switch (parsedAction->action) {
     case Clean:
-        return manager->cleanCommand;
-        break;
+        return getPackageManagerCleanCommand(manager);
     case Install:
-        return manager->installCommand;
-        break;
+        return getPackageManagerInstallCommand(manager);
     case Search:
-        return manager->searchCommand;
-        break;
+        return getPackageManagerSearchCommand(manager);
     case SearchExact:
-        return manager->searchExactCommand;
-        break;
+        return getPackageManagerSearchExactCommand(manager);
     case Upgrade:
-        return manager->upgradeCommand;
-        break;
+        return getPackageManagerUpgradeCommand(manager);
     default:
         return "";
     }
@@ -170,13 +146,13 @@ char* getCommandForAction(PackageManager* manager, ParsedAction* parsedAction) {
 void runCommand(PackageManager* manager, ParsedAction* parsedAction) {
     printf(DIVIDER);
     printf(DIVIDER);
-    printf("%s\n", manager->name);
+    printf("%s\n", getPackageManagerName(manager));
     printf(DIVIDER);
 
     char *command = getCommandForAction(manager, parsedAction);
 
     if (strcmp(command, "") == 0) {
-        printf("No relevant command for %s\n", manager->name);
+        printf("No relevant command for %s\n", getPackageManagerName(manager));
 
         return;
     }
@@ -189,7 +165,7 @@ void runCommand(PackageManager* manager, ParsedAction* parsedAction) {
 
 void runCommandForAllManagers(PackageManager* managers[], ParsedAction* parsedAction) {
     for (int i = 0; i < MANAGERS_COUNT; i++) {
-        if (managers[i]->enabled && isInstalled(managers[i])) {
+        if (isPackageManagerEnabled(managers[i]) && isPackageManagerInstalled(managers[i])) {
             runCommand(managers[i], parsedAction);
         }
     }
@@ -245,7 +221,7 @@ void installPackage(PackageManager* managers[], ParsedAction* parsedAction) {
     char packageChoice[COMMAND_LENGTH];
     scanf("%s", packageChoice);
 
-    printf("Installing %s from %s...\n", packageChoice, managers[managerIndex]->name);
+    printf("Installing %s from %s...\n", packageChoice, getPackageManagerName(managers[managerIndex]));
     runCommand(managers[managerIndex], parsedAction);
 }
 
@@ -263,26 +239,9 @@ void executeAction(PackageManager* managers[], ParsedAction* parsedAction) {
     }
 }
 
-PackageManager* definePackageManager(
-    const char name[],
-    Commands* commands,
-    bool enabled
-) {
-    PackageManager* manager = (PackageManager*)(malloc(sizeof(PackageManager)));
-    strncpy(manager->name, name, NAME_LENGTH);
-    strncpy(manager->cleanCommand, getCleanCommand(commands), COMMAND_LENGTH);
-    strncpy(manager->installCommand, getInstallCommand(commands), COMMAND_LENGTH);
-    strncpy(manager->searchCommand, getSearchCommand(commands), COMMAND_LENGTH);
-    strncpy(manager->searchExactCommand, getSearchExactCommand(commands), COMMAND_LENGTH);
-    strncpy(manager->upgradeCommand, getUpgradeCommand(commands), COMMAND_LENGTH);
-    manager->enabled = enabled;
-
-    return manager;
-}
-
 /*********
 * Package Managers
-*n********/
+*********/
 PackageManager* apt(ParsedAction* parsedAction) {
     return definePackageManager(APT, getAptCommands(parsedAction->target), getApt(parsedAction->managers));
 }
