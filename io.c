@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include "io.h"
+#include "supported_manager.h"
+#include "commands.h"
 
 void printUsage(char* programName) {
     printf("Usage:\n");
@@ -9,3 +11,9 @@ void printUsage(char* programName) {
     printf("%s clean\n", programName);
 }
 
+int promptForManager() {
+    char managerChoice[COMMAND_LENGTH];
+    scanf("%s", managerChoice);
+
+    return getManagerIndex(managerChoice);
+}

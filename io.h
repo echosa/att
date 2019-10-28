@@ -4,5 +4,6 @@
 static const char DIVIDER[] = "####################\n";
 
 void printUsage(char* programName);
+int promptForManager();
 
 #endif
