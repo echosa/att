@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "guix.h"
 #include "commands.h"
 
 Commands* getGuixCommands(char* target) {

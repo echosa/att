@@ -1,17 +1,7 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "action.h"
-#include "managers.h"
-#include "commands.h"
-#include "apt.h"
-#include "brew.h"
-#include "flatpak.h"
-#include "guix.h"
-#include "snap.h"
 #include "io.h"
-#include "package_manager.h"
 #include "requested_action.h"
+#include "package_manager.h"
 #include "supported_manager.h"
 #include "run.h"
 

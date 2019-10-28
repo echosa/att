@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "flatpak.h"
 #include "commands.h"
 
 Commands* getFlatpakCommands(char* target) {

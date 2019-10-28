@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "apt.h"
 #include "commands.h"
 
 Commands* getAptCommands(char* target) {

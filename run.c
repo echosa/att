@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "package_manager.h"
-#include "requested_action.h"
+#include "run.h"
 #include "io.h"
 #include "supported_manager.h"
 

@@ -5,8 +5,6 @@
 #include "flatpak.h"
 #include "guix.h"
 #include "snap.h"
-#include "package_manager.h"
-#include "requested_action.h"
 
 enum SupportedManager getManagerIndex(char* managerName) {
     if (strcmp(managerName, APT) == 0) {

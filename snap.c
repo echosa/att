@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "snap.h"
 #include "commands.h"
 
 Commands* getSnapCommands(char* target) {

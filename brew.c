@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "brew.h"
 #include "commands.h"
 
 Commands* getBrewCommands(char* target) {
