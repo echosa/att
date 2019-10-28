@@ -10,6 +10,7 @@
 #include "flatpak.h"
 #include "guix.h"
 #include "snap.h"
+#include "io.h"
 
 #define NAME_LENGTH 10
 #define INSTALL_CHECK_LENGTH 50
@@ -26,8 +27,6 @@ static struct option long_options[] = {
     { MANAGERS_OPTION, required_argument, NULL, 'm' },
     { NULL, 0, NULL, 0 }
 };
-
-static const char DIVIDER[] = "####################\n";
 
 enum Manager { Apt, Brew, Flatpak, Guix, Snap, InvalidManager };
 static const int MANAGERS_COUNT = 5;
@@ -56,14 +55,6 @@ typedef struct PackageManager {
 /*********
 * Functions
 *********/
-void printUsage(char* programName) {
-    printf("Usage:\n");
-    printf("%s search [--exact] <package>\n", programName);
-    printf("%s install [--exact] <package>\n", programName);
-    printf("%s upgrade\n", programName);
-    printf("%s clean\n", programName);
-}
-
 bool isInstalled(PackageManager* manager) {
     char installedCheck[INSTALL_CHECK_LENGTH];
     snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", manager->name);
