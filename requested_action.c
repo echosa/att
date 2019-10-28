@@ -9,6 +9,7 @@
 #include "flatpak.h"
 #include "guix.h"
 #include "snap.h"
+#include "options.h"
 
 struct RequestedAction {
     Managers* managers;
@@ -28,6 +29,65 @@ RequestedAction* requested_action_new() {
     requestedAction->target = NULL;
     requestedAction->exact = false;
     requestedAction->debug = false;
+
+    return requestedAction;
+}
+
+RequestedAction* build_requested_action_from_options(int argc, char *argv[]) {
+    int c;
+    char *token;
+
+    RequestedAction* requestedAction = requested_action_new();
+
+    while (1) {
+        int option_index = 0;
+
+        c = getopt_long(argc, argv, "dehm",  long_options, &option_index);
+        if (c == -1) {
+            break;
+        }
+
+        switch (c) {
+        case 'd':
+            enableDebug(requestedAction);
+            break;
+
+        case 'e':
+            enableExactSearch(requestedAction);
+            break;
+
+        case 'h':
+            setRequestedActionAction(requestedAction, Help);
+
+            return requestedAction;
+
+        case 'm':
+            setAllManagers(getRequestedActionManagers(requestedAction), false);
+            while ((token = strsep(&optarg, ",")) != NULL) {
+                enableManagerForRequestedAction(requestedAction, token);
+            }
+            break;
+        }
+    }
+
+    if (optind >= argc) {
+        setRequestedActionAction(requestedAction, InvalidAction);
+
+        return requestedAction;
+    }
+
+    if (optind < argc) {
+        setRequestedActionAction(requestedAction, parseAction(argv[optind++], isExactSearch(requestedAction)));
+    }
+
+    if (optind < argc) {
+        setRequestedActionTarget(requestedAction, argv[optind++]);
+    }
+
+    enum Action action = getRequestedActionAction(requestedAction);
+    if ((action == Search || action == SearchExact || action == Install) && getRequestedActionTarget(requestedAction) == NULL) {
+        setRequestedActionAction(requestedAction, InvalidAction);
+    }
 
     return requestedAction;
 }

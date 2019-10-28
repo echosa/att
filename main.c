@@ -1,4 +1,3 @@
-#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,77 +14,6 @@
 #include "requested_action.h"
 #include "supported_manager.h"
 
-static const char DEBUG_OPTION[] = "debug";
-static const char EXACT_SEARCH_OPTION[] = "exact";
-static const char HELP_OPTION[] = "help";
-static const char MANAGERS_OPTION[] = "managers";
-
-static struct option long_options[] = {
-    { DEBUG_OPTION, no_argument, NULL, 'd' },
-    { EXACT_SEARCH_OPTION, no_argument, NULL, 'e' },
-    { HELP_OPTION, no_argument, NULL, 'h' },
-    { MANAGERS_OPTION, required_argument, NULL, 'm' },
-    { NULL, 0, NULL, 0 }
-};
-
-RequestedAction* parseOptions(int argc, char *argv[]) {
-    int c;
-    char *token;
-
-    RequestedAction* requestedAction = requested_action_new();
-
-    while (1) {
-        int option_index = 0;
-
-        c = getopt_long(argc, argv, "dehm",  long_options, &option_index);
-        if (c == -1) {
-            break;
-        }
-
-        switch (c) {
-        case 'd':
-            enableDebug(requestedAction);
-            break;
-
-        case 'e':
-            enableExactSearch(requestedAction);
-            break;
-
-        case 'h':
-            setRequestedActionAction(requestedAction, Help);
-
-            return requestedAction;
-
-        case 'm':
-            setAllManagers(getRequestedActionManagers(requestedAction), false);
-            while ((token = strsep(&optarg, ",")) != NULL) {
-                enableManagerForRequestedAction(requestedAction, token);
-            }
-            break;
-        }
-    }
-
-    if (optind >= argc) {
-        setRequestedActionAction(requestedAction, InvalidAction);
-
-        return requestedAction;
-    }
-
-    if (optind < argc) {
-        setRequestedActionAction(requestedAction, parseAction(argv[optind++], isExactSearch(requestedAction)));
-    }
-
-    if (optind < argc) {
-        setRequestedActionTarget(requestedAction, argv[optind++]);
-    }
-
-    enum Action action = getRequestedActionAction(requestedAction);
-    if ((action == Search || action == SearchExact || action == Install) && getRequestedActionTarget(requestedAction) == NULL) {
-        setRequestedActionAction(requestedAction, InvalidAction);
-    }
-
-    return requestedAction;
-}
 
 char* getCommandForAction(PackageManager* manager, RequestedAction* requestedAction) {
     switch (getRequestedActionAction(requestedAction)) {
@@ -217,7 +145,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    RequestedAction* requestedAction = parseOptions(argc, argv);
+    RequestedAction* requestedAction = build_requested_action_from_options(argc, argv);
 
     if (getRequestedActionAction(requestedAction) == InvalidAction) {
         printUsage(argv[0]);

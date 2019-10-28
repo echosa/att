@@ -8,7 +8,7 @@
 typedef struct RequestedAction RequestedAction;
 
 RequestedAction* requested_action_new();
-
+RequestedAction* build_requested_action_from_options(int argc, char *argv[]);
 Managers* getRequestedActionManagers(RequestedAction* requestedAction);
 void setRequestedActionManagers(RequestedAction* requestedAction, Managers* managers);
 enum Action getRequestedActionAction(RequestedAction* requestedAction);
