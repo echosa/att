@@ -34,23 +34,23 @@ static const char SNAP[] = "snap";
 /*********
 * Structs
 *********/
-struct Managers {
+typedef struct Managers {
     bool apt;
     bool brew;
     bool flatpak;
     bool guix;
     bool snap;
-};
+} Managers;
 
-struct ParsedAction {
-    struct Managers* managers;
+typedef struct ParsedAction {
+    Managers* managers;
     enum Action action;
     char* target;
     bool exact;
     bool debug;
-};
+} ParsedAction;
 
-struct PackageManager {
+typedef struct PackageManager {
     char name[NAME_LENGTH];
     char cleanCommand[COMMAND_LENGTH];
     char installCommand[COMMAND_LENGTH];
@@ -58,7 +58,7 @@ struct PackageManager {
     char searchExactCommand[COMMAND_LENGTH];
     char upgradeCommand[COMMAND_LENGTH];
     bool enabled;
-};
+} PackageManager;
 
 /*********
 * Functions
@@ -71,14 +71,14 @@ void printUsage(char* programName) {
     printf("%s clean\n", programName);
 }
 
-bool isInstalled(struct PackageManager* manager) {
+bool isInstalled(PackageManager* manager) {
     char installedCheck[INSTALL_CHECK_LENGTH];
     snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", manager->name);
 
     return system(installedCheck) == 0;
 }
 
-void setManager(struct ParsedAction* parsedAction, char* managerName) {
+void setManager(ParsedAction* parsedAction, char* managerName) {
     if (strcmp(managerName, APT) == 0) {
         parsedAction->managers->apt = true;
     } else if (strcmp(managerName, BREW) == 0) {
@@ -92,7 +92,7 @@ void setManager(struct ParsedAction* parsedAction, char* managerName) {
     }
 }
 
-void setAllManagers(struct Managers* managers, bool enabled) {
+void setAllManagers(Managers* managers, bool enabled) {
     managers->apt = enabled;
     managers->brew = enabled;
     managers->flatpak = enabled;
@@ -100,8 +100,8 @@ void setAllManagers(struct Managers* managers, bool enabled) {
     managers->snap = enabled;
 }
 
-void setParsedActionDefaults(struct ParsedAction* parsedAction) {
-    struct Managers* managers = (struct Managers*)(malloc(sizeof(struct Managers)));
+void setParsedActionDefaults(ParsedAction* parsedAction) {
+    Managers* managers = (Managers*)(malloc(sizeof(Managers)));
     setAllManagers(managers, true);
     parsedAction->managers = managers;
     parsedAction->action = InvalidAction;
@@ -110,11 +110,11 @@ void setParsedActionDefaults(struct ParsedAction* parsedAction) {
     parsedAction->debug = false;
 }
 
-struct ParsedAction* parseOptions(int argc, char *argv[]) {
+ParsedAction* parseOptions(int argc, char *argv[]) {
     int c;
     char *token;
 
-    struct ParsedAction* parsedAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
+    ParsedAction* parsedAction = (ParsedAction*)(malloc(sizeof(ParsedAction)));
     setParsedActionDefaults(parsedAction);
 
     while (1) {
@@ -169,7 +169,7 @@ struct ParsedAction* parseOptions(int argc, char *argv[]) {
     return parsedAction;
 }
 
-char* getCommandForAction(struct PackageManager* manager, struct ParsedAction* parsedAction) {
+char* getCommandForAction(PackageManager* manager, ParsedAction* parsedAction) {
     switch (parsedAction->action) {
     case Clean:
         return manager->cleanCommand;
@@ -191,7 +191,7 @@ char* getCommandForAction(struct PackageManager* manager, struct ParsedAction* p
     }
 }
 
-void runCommand(struct PackageManager* manager, struct ParsedAction* parsedAction) {
+void runCommand(PackageManager* manager, ParsedAction* parsedAction) {
     printf(DIVIDER);
     printf(DIVIDER);
     printf("%s\n", manager->name);
@@ -211,7 +211,7 @@ void runCommand(struct PackageManager* manager, struct ParsedAction* parsedActio
     }
 }
 
-void runCommandForAllManagers(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
+void runCommandForAllManagers(PackageManager* managers[], ParsedAction* parsedAction) {
     for (int i = 0; i < MANAGERS_COUNT; i++) {
         if (managers[i]->enabled && isInstalled(managers[i])) {
             runCommand(managers[i], parsedAction);
@@ -219,8 +219,8 @@ void runCommandForAllManagers(struct PackageManager* managers[], struct ParsedAc
     }
 }
 
-void runPackageSearch(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
-    struct ParsedAction* searchAction = (struct ParsedAction*)(malloc(sizeof(struct ParsedAction)));
+void runPackageSearch(PackageManager* managers[], ParsedAction* parsedAction) {
+    ParsedAction* searchAction = (ParsedAction*)(malloc(sizeof(ParsedAction)));
     if (parsedAction->exact) {
         searchAction->action = SearchExact;
     } else {
@@ -253,7 +253,7 @@ int promptForManager() {
     return getManagerIndex(managerChoice);
 }
 
-void installPackage(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
+void installPackage(PackageManager* managers[], ParsedAction* parsedAction) {
     printf("Searching for package to install...\n");
     runPackageSearch(managers, parsedAction);
 
@@ -273,7 +273,7 @@ void installPackage(struct PackageManager* managers[], struct ParsedAction* pars
     runCommand(managers[managerIndex], parsedAction);
 }
 
-void executeAction(struct PackageManager* managers[], struct ParsedAction* parsedAction) {
+void executeAction(PackageManager* managers[], ParsedAction* parsedAction) {
     if (parsedAction->action == Install) {
         installPackage(managers, parsedAction);
     } else {
@@ -287,7 +287,7 @@ void executeAction(struct PackageManager* managers[], struct ParsedAction* parse
     }
 }
 
-struct PackageManager* definePackageManager(
+PackageManager* definePackageManager(
     const char name[],
     char *cleanCommand,
     char *installCommand,
@@ -296,7 +296,7 @@ struct PackageManager* definePackageManager(
     char *upgradeCommand,
     bool enabled
 ) {
-    struct PackageManager* manager = (struct PackageManager*)(malloc(sizeof(struct PackageManager)));
+    PackageManager* manager = (PackageManager*)(malloc(sizeof(PackageManager)));
     strncpy(manager->name, name, NAME_LENGTH);
     strncpy(manager->cleanCommand, cleanCommand, COMMAND_LENGTH);
     strncpy(manager->installCommand, installCommand, COMMAND_LENGTH);
@@ -311,7 +311,7 @@ struct PackageManager* definePackageManager(
 /*********
 * Package Managers
 *n********/
-struct PackageManager* apt(struct ParsedAction* parsedAction) {
+PackageManager* apt(ParsedAction* parsedAction) {
     char cleanCommand[] = "sudo apt autoremove";
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "sudo apt install %s", parsedAction->target);
@@ -324,7 +324,7 @@ struct PackageManager* apt(struct ParsedAction* parsedAction) {
     return definePackageManager(APT, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->apt);
 }
 
-struct PackageManager* brew(struct ParsedAction* parsedAction) {
+PackageManager* brew(ParsedAction* parsedAction) {
     char cleanCommand[] = "brew cleanup";
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "brew install %s", parsedAction->target);
@@ -337,7 +337,7 @@ struct PackageManager* brew(struct ParsedAction* parsedAction) {
     return definePackageManager(BREW, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->brew);
 }
 
-struct PackageManager* flatpak(struct ParsedAction* parsedAction) {
+PackageManager* flatpak(ParsedAction* parsedAction) {
     char cleanCommand[] = "flatpak uninstall --unused";
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "flatpak install %s", parsedAction->target);
@@ -350,7 +350,7 @@ struct PackageManager* flatpak(struct ParsedAction* parsedAction) {
     return definePackageManager(FLATPAK, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->flatpak);
 }
 
-struct PackageManager* guix(struct ParsedAction* parsedAction) {
+PackageManager* guix(ParsedAction* parsedAction) {
     char cleanCommand[] = "guix package --delete-generations; guix gc --collect-garbage; guix gc --list-dead";
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "guix install %s", parsedAction->target);
@@ -363,7 +363,7 @@ struct PackageManager* guix(struct ParsedAction* parsedAction) {
     return definePackageManager(GUIX, cleanCommand, installCommand, searchCommand, searchExactCommand, upgradeCommand, parsedAction->managers->guix);
 }
 
-struct PackageManager* snap(struct ParsedAction* parsedAction) {
+PackageManager* snap(ParsedAction* parsedAction) {
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "snap install %s", parsedAction->target);
     char searchCommand[COMMAND_LENGTH];
@@ -385,7 +385,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    struct ParsedAction* parsedAction = parseOptions(argc, argv);
+    ParsedAction* parsedAction = parseOptions(argc, argv);
 
     if (parsedAction->action == InvalidAction) {
         printUsage(argv[0]);
@@ -399,7 +399,7 @@ int main(int argc, char *argv[]) {
         return EXIT_SUCCESS;
     }
 
-    struct PackageManager* managers[] = {
+    PackageManager* managers[] = {
         apt(parsedAction),
         brew(parsedAction),
         flatpak(parsedAction),
