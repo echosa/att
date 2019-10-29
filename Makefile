@@ -1,11 +1,11 @@
-att: *.c
-	clang -Wall -Wextra -pedantic -o att *.c
-debug: *.c
-	clang -g -O0 -Wall -Wextra -pedantic -o att *.c
+att: src/*.c
+	clang -Wall -Wextra -pedantic -o att src/*.c
+debug: src/*.c
+	clang -g -O0 -Wall -Wextra -pedantic -o att src/*.c
 check:
 	cppcheck -i.ccls-cache .
 test: 
-	clang -Wall -Wextra -pedantic -l cmocka -o tests test/tests.c action.c \
+	clang -Wall -Wextra -pedantic -l cmocka -o tests test/tests.c src/action.c \
     && ./tests \
     ; rm tests
 install:
