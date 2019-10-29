@@ -5,9 +5,7 @@ debug: src/*.c
 check:
 	cppcheck -i.ccls-cache .
 test: 
-	clang -Wall -Wextra -pedantic -l cmocka -o tests test/tests.c src/action.c \
-    && ./tests \
-    ; rm tests
+	clang -Wall -Wextra -pedantic -l cmocka -o tests test/action.c src/acton.c && ./tests ; rm tests
 install:
 	cp att /usr/local/bin
 uninstall:
