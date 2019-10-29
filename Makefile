@@ -1,7 +1,7 @@
-att: main.c
-	clang -Wall -Wextra -pedantic -o att main.c
-debug: main.c
-	clang -g -O0 -Wall -Wextra -pedantic -o att main.c
+att: *.c
+	clang -Wall -Wextra -pedantic -o att *.c
+debug: *.c
+	clang -g -O0 -Wall -Wextra -pedantic -o att *.c
 tests: tests.c main.c
 	clang -Wall -Wextra -pedantic -l cmocka -o tests tests.c \
     && ./tests \
