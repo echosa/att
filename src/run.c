@@ -4,6 +4,13 @@
 #include "run.h"
 #include "io.h"
 #include "supported_manager.h"
+#include "requested_action.h"
+#include "apt.h"
+#include "brew.h"
+#include "flatpak.h"
+#include "guix.h"
+#include "snap.h"
+#include "package_manager.h"
 
 char* getCommandForAction(PackageManager* manager, RequestedAction* requestedAction) {
     switch (getRequestedActionAction(requestedAction)) {
@@ -77,8 +84,24 @@ void installPackage(PackageManager* managers[], RequestedAction* requestedAction
     char packageChoice[COMMAND_LENGTH];
     scanf("%s", packageChoice);
 
+    setRequestedActionTarget(requestedAction, packageChoice);
+    PackageManager* manager = managers[managerIndex];
+    Commands* commands = NULL;
+    if (strcmp(getPackageManagerName(manager), APT) == 0) {
+      commands = getAptCommands(packageChoice);
+    } else if (strcmp(getPackageManagerName(manager), BREW) == 0) {
+      commands = getBrewCommands(packageChoice);
+    } else if (strcmp(getPackageManagerName(manager), FLATPAK) == 0) {
+      commands = getFlatpakCommands(packageChoice);
+    } else if (strcmp(getPackageManagerName(manager), GUIX) == 0) {
+      commands = getGuixCommands(packageChoice);
+    } else if (strcmp(getPackageManagerName(manager), SNAP) == 0) {
+      commands = getSnapCommands(packageChoice);
+    }
+    setPackageManagerInstallCommand(manager, commands);
+
     printf("Installing %s from %s...\n", packageChoice, getPackageManagerName(managers[managerIndex]));
-    runCommand(managers[managerIndex], requestedAction);
+    runCommand(manager, requestedAction);
 }
 
 void executeAction(PackageManager* managers[], RequestedAction* requestedAction) {
