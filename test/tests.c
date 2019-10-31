@@ -8,6 +8,7 @@
 #include "commands_tests.c"
 #include "flatpak_tests.c"
 #include "guix_tests.c"
+#include "managers_tests.c"
 #include "snap_tests.c"
 
 int main(void) {
@@ -27,6 +28,18 @@ int main(void) {
         cmocka_unit_test(setting_and_getting_search_command_should_be_correct),
         cmocka_unit_test(setting_and_getting_search_exact_command_should_be_correct),
         cmocka_unit_test(setting_and_getting_upgrade_command_should_be_correct),
+        cmocka_unit_test(setting_all_managers_should_enable_all_managers),
+        cmocka_unit_test(unsetting_all_managers_should_disable_all_managers),
+        cmocka_unit_test(setting_apt_manager_should_enable_it),
+        cmocka_unit_test(unsetting_apt_manager_should_disable_it),
+        cmocka_unit_test(setting_brew_manager_should_enable_it),
+        cmocka_unit_test(unsetting_brew_manager_should_disable_it),
+        cmocka_unit_test(setting_flatpak_manager_should_enable_it),
+        cmocka_unit_test(unsetting_flatpak_manager_should_disable_it),
+        cmocka_unit_test(setting_guix_manager_should_enable_it),
+        cmocka_unit_test(unsetting_guix_manager_should_disable_it),
+        cmocka_unit_test(setting_snap_manager_should_enable_it),
+        cmocka_unit_test(unsetting_snap_manager_should_disable_it),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }
