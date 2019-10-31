@@ -12,3 +12,4 @@ uninstall:
 	rm /usr/local/bin/att
 check-syntax:
 	clang -o /dev/null -l cmocka -S ${CHK_SOURCES}
+.PHONY: test
