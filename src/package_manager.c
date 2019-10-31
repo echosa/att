@@ -58,6 +58,10 @@ char* getPackageManagerUpgradeCommand(PackageManager* manager) {
     return manager->upgradeCommand;
 }
 
+void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands) {
+    strncpy(manager->installCommand, getInstallCommand(commands), COMMAND_LENGTH);
+}
+
 bool isPackageManagerEnabled(PackageManager* manager) {
     return manager->enabled;
 }
