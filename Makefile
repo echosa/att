@@ -5,7 +5,7 @@ debug: src/*.c
 check:
 	cppcheck -i.ccls-cache .
 test: 
-	clang -Wall -Wextra -pedantic -l cmocka -o tests test/action.c src/acton.c && ./tests ; rm tests
+	find src -type f \( -iname "*.c" ! -iname "main.c" \)|xargs clang -Wall -Wextra -pedantic -l cmocka -o tests test/tests.c && ./tests ; rm tests
 install:
 	cp att /usr/local/bin
 uninstall:
