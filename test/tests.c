@@ -8,6 +8,7 @@
 #include "commands_tests.c"
 #include "flatpak_tests.c"
 #include "guix_tests.c"
+#include "package_manager_tests.c"
 #include "managers_tests.c"
 #include "snap_tests.c"
 
@@ -40,6 +41,8 @@ int main(void) {
         cmocka_unit_test(unsetting_guix_manager_should_disable_it),
         cmocka_unit_test(setting_snap_manager_should_enable_it),
         cmocka_unit_test(unsetting_snap_manager_should_disable_it),
+        cmocka_unit_test(defining_package_manager_should_set_all_commands),
+        cmocka_unit_test(setting_package_manager_target_should_set_it_correctly),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }
