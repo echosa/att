@@ -1,5 +1,5 @@
 #include <string.h>
-#include "action.h"
+#include "../include/action.h"
 
 enum Action parseAction(char* action, bool exactSearch) {
     if (strcmp(action, CLEAN_ACTION) == 0) {

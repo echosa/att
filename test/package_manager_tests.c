@@ -4,8 +4,8 @@
 #include <cmocka.h>
 #include <string.h>
 #include <stdbool.h>
-#include "../src/package_manager.h"
-#include "../src/commands.h"
+#include "../include/package_manager.h"
+#include "../include/commands.h"
 
 static void defining_package_manager_should_set_all_commands(void **state) {
     (void) state; /* unused */

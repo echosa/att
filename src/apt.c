@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "commands.h"
+#include "../include/apt.h"
+#include "../include/commands.h"
 
 Commands* getAptCommands(char* target) {
     char installCommand[COMMAND_LENGTH];

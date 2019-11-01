@@ -2,7 +2,7 @@
 #include <stddef.h>
 #include <setjmp.h>
 #include <cmocka.h>
-#include "../src/action.h"
+#include "../include/action.h"
 
 static void clean_action_should_parse_correctly(void **state) {
     (void) state; /* unused */

@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "run.h"
-#include "io.h"
-#include "supported_manager.h"
-#include "requested_action.h"
-#include "apt.h"
-#include "brew.h"
-#include "flatpak.h"
-#include "guix.h"
-#include "snap.h"
-#include "package_manager.h"
+#include "../include/run.h"
+#include "../include/io.h"
+#include "../include/supported_manager.h"
+#include "../include/requested_action.h"
+#include "../include/apt.h"
+#include "../include/brew.h"
+#include "../include/flatpak.h"
+#include "../include/guix.h"
+#include "../include/snap.h"
+#include "../include/package_manager.h"
 
 char* getCommandForAction(PackageManager* manager, RequestedAction* requestedAction) {
     switch (getRequestedActionAction(requestedAction)) {
@@ -97,6 +97,10 @@ void installPackage(PackageManager* managers[], RequestedAction* requestedAction
       commands = getGuixCommands(packageChoice);
     } else if (strcmp(getPackageManagerName(manager), SNAP) == 0) {
       commands = getSnapCommands(packageChoice);
+    } else {
+        printf("Invalid package manager");
+
+        return;
     }
     setPackageManagerInstallCommand(manager, commands);
 

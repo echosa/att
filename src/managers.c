@@ -1,6 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
-#include "managers.h"
+#include "../include/managers.h"
 
 struct Managers {
     bool apt;

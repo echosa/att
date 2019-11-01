@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "commands.h"
+#include "../include/flatpak.h"
+#include "../include/commands.h"
 
 Commands* getFlatpakCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
