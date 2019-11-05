@@ -5,11 +5,11 @@ debug: src/*.c
 check:
 	cppcheck -i.ccls-cache .
 test: 
-	find src -type f \( -iname "*.c" ! -iname "main.c" \)|xargs clang -Wall -Wextra -pedantic -l cmocka -o test/tests test/tests.c \
+	find src -type f \( -iname "*.c" ! -iname "main.c" \)|xargs clang -Wall -Wextra -pedantic -l cmocka -Wl,--wrap=system -o test/tests test/tests.c \
 	&& test/tests \
 	&& rm test/tests
 coverage: 
-	find src -type f \( -iname "*.c" ! -iname "main.c" \)|xargs clang -Wall -Wextra -pedantic --coverage -l cmocka -o test/tests test/tests.c \
+	find src -type f \( -iname "*.c" ! -iname "main.c" \)|xargs clang -Wall -Wextra -pedantic -l cmocka -Wl,--wrap=system -o test/tests test/tests.c \
 	&& test/tests \
 	&& rm test/tests \
 	&& llvm-cov-9 gcov -f -b *.gcda \
@@ -23,4 +23,4 @@ uninstall:
 	rm /usr/local/bin/att
 check-syntax:
 	clang -o /dev/null -l cmocka -S ${CHK_SOURCES}
-.PHONY: test
+.PHONY: test coverage

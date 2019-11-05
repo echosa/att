@@ -12,6 +12,11 @@
 #include "managers_tests.c"
 #include "snap_tests.c"
 
+int __wrap_system(const char *command) {
+    check_expected(command);
+    return mock();
+}
+
 int main(void) {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(clean_action_should_parse_correctly),
@@ -19,6 +24,7 @@ int main(void) {
         cmocka_unit_test(search_action_should_parse_correctly),
         cmocka_unit_test(search_exact_action_should_parse_correctly),
         cmocka_unit_test(upgrade_action_should_parse_correctly),
+        cmocka_unit_test(invalid_action_should_parse_correctly),
         cmocka_unit_test(apt_commands_should_be_correct),
         cmocka_unit_test(brew_commands_should_be_correct),
         cmocka_unit_test(flatpak_commands_should_be_correct),
@@ -41,8 +47,9 @@ int main(void) {
         cmocka_unit_test(unsetting_guix_manager_should_disable_it),
         cmocka_unit_test(setting_snap_manager_should_enable_it),
         cmocka_unit_test(unsetting_snap_manager_should_disable_it),
-        cmocka_unit_test(defining_package_manager_should_set_all_commands),
+        cmocka_unit_test(defining_package_manager_should_set_all_things_correctly),
         cmocka_unit_test(setting_package_manager_target_should_set_it_correctly),
+        cmocka_unit_test(check_if_package_is_installed_should_work),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

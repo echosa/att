@@ -33,3 +33,9 @@ static void upgrade_action_should_parse_correctly(void **state) {
     enum Action action = parseAction((char*) UPGRADE_ACTION, false);
     assert_int_equal(action, Upgrade);
 }
+
+static void invalid_action_should_parse_correctly(void **state) {
+    (void) state; /* unused */
+    enum Action action = parseAction("invalid action", false);
+    assert_int_equal(action, InvalidAction);
+}
