@@ -5,7 +5,18 @@ debug: src/*.c
 check:
 	cppcheck -i.ccls-cache .
 test: 
-	find src -type f \( -iname "*.c" ! -iname "main.c" \)|xargs clang -Wall -Wextra -pedantic -l cmocka -o test/tests test/tests.c && test/tests ; rm test/tests
+	find src -type f \( -iname "*.c" ! -iname "main.c" \)|xargs clang -Wall -Wextra -pedantic -l cmocka -o test/tests test/tests.c \
+	&& test/tests \
+	&& rm test/tests
+coverage: 
+	find src -type f \( -iname "*.c" ! -iname "main.c" \)|xargs clang -Wall -Wextra -pedantic --coverage -l cmocka -o test/tests test/tests.c \
+	&& test/tests \
+	&& rm test/tests \
+	&& llvm-cov-9 gcov -f -b *.gcda \
+	&& lcov --directory . --base-directory . --gcov-tool ./llvm-gcov.sh --capture -o cov.info \
+	&& genhtml cov.info -o coverage \
+	&& rm *.gcno *.gcda cov.info
+
 install:
 	cp bin/att /usr/local/bin
 uninstall:
