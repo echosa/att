@@ -33,7 +33,7 @@ void setCommand(Commands *commands, enum Action action, char* command) {
     }
 }
 
-char* getCommand(Commands *commands, enum Action action) {
+char* getCommandString(Commands *commands, enum Action action) {
     if (action == Clean) {
         return commands->clean;
     } else if (action == Install) {

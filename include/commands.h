@@ -9,6 +9,6 @@ typedef struct Commands Commands;
 
 Commands* commands_new();
 void setCommand(Commands* commands, enum Action action, char command[]);
-char* getCommand(Commands* commands, enum Action action);
+char* getCommandString(Commands* commands, enum Action action);
 
 #endif

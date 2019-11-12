@@ -6,24 +6,14 @@
 
 struct PackageManager {
     char name[NAME_LENGTH];
-    char cleanCommand[COMMAND_LENGTH];
-    char installCommand[COMMAND_LENGTH];
-    char searchCommand[COMMAND_LENGTH];
-    char searchExactCommand[COMMAND_LENGTH];
-    char upgradeCommand[COMMAND_LENGTH];
-    char whichCommand[COMMAND_LENGTH];
+    Commands* commands;
     bool enabled;
 };
 
 PackageManager* definePackageManager(const char name[], Commands* commands, bool enabled) {
     PackageManager* manager = (PackageManager*)(malloc(sizeof(PackageManager)));
     strncpy(manager->name, name, NAME_LENGTH);
-    strncpy(manager->cleanCommand, getCommand(commands, Clean), COMMAND_LENGTH);
-    strncpy(manager->installCommand, getCommand(commands, Install), COMMAND_LENGTH);
-    strncpy(manager->searchCommand, getCommand(commands, Search), COMMAND_LENGTH);
-    strncpy(manager->searchExactCommand, getCommand(commands, SearchExact), COMMAND_LENGTH);
-    strncpy(manager->upgradeCommand, getCommand(commands, Upgrade), COMMAND_LENGTH);
-    strncpy(manager->whichCommand, getCommand(commands, Which), COMMAND_LENGTH);
+    manager->commands = commands;
     manager->enabled = enabled;
 
     return manager;
@@ -41,25 +31,11 @@ char* getPackageManagerName(PackageManager* manager) {
 }
 
 char* getPackageManagerCommand(PackageManager* manager, enum Action action) {
-    if (action == Clean) {
-        return manager->cleanCommand;
-    } else if (action == Install) {
-        return manager->installCommand;
-    } else if (action == Search) {
-        return manager->searchCommand;
-    } else if (action == SearchExact) {
-        return manager->searchExactCommand;
-    } else if (action == Upgrade) {
-        return manager->upgradeCommand;
-    } else if (action == Which) {
-        return manager->whichCommand;
-    }
-
-    return "";
+    return getCommandString(manager->commands, action);
 }
 
 void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands) {
-    strncpy(manager->installCommand, getCommand(commands, Install), COMMAND_LENGTH);
+    setCommand(manager->commands, Install, getCommandString(commands, Install));
 }
 
 bool isPackageManagerEnabled(PackageManager* manager) {
