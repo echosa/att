@@ -12,12 +12,7 @@ typedef struct PackageManager PackageManager;
 PackageManager* definePackageManager(const char name[], Commands* commands, bool enabled);
 bool isPackageManagerInstalled(PackageManager* manager);
 char* getPackageManagerName(PackageManager* manager);
-char* getPackageManagerCleanCommand(PackageManager* manager);
-char* getPackageManagerInstallCommand(PackageManager* manager);
-char* getPackageManagerSearchCommand(PackageManager* manager);
-char* getPackageManagerSearchExactCommand(PackageManager* manager);
-char* getPackageManagerUpgradeCommand(PackageManager* manager);
-char* getPackageManagerWhichCommand(PackageManager* manager);
+char* getPackageManagerCommand(PackageManager* manager, enum Action action);
 void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands);
 bool isPackageManagerEnabled(PackageManager* manager);
 

@@ -17,12 +17,12 @@ static void defining_package_manager_should_set_all_things_correctly(void **stat
     setCommand(commands, Upgrade, "upgrade command");
     setCommand(commands, Which, "which command");
     PackageManager* packageManager = definePackageManager("foo", commands, true);
-    assert_string_equal("clean command", getPackageManagerCleanCommand(packageManager));
-    assert_string_equal("install command", getPackageManagerInstallCommand(packageManager));
-    assert_string_equal("search command", getPackageManagerSearchCommand(packageManager));
-    assert_string_equal("search exact command", getPackageManagerSearchExactCommand(packageManager));
-    assert_string_equal("upgrade command", getPackageManagerUpgradeCommand(packageManager));
-    assert_string_equal("which command", getPackageManagerWhichCommand(packageManager));
+    assert_string_equal("clean command", getPackageManagerCommand(packageManager, Clean));
+    assert_string_equal("install command", getPackageManagerCommand(packageManager, Install));
+    assert_string_equal("search command", getPackageManagerCommand(packageManager, Search));
+    assert_string_equal("search exact command", getPackageManagerCommand(packageManager, SearchExact));
+    assert_string_equal("upgrade command", getPackageManagerCommand(packageManager, Upgrade));
+    assert_string_equal("which command", getPackageManagerCommand(packageManager, Which));
     assert_true(isPackageManagerEnabled(packageManager));
     assert_string_equal("foo", getPackageManagerName(packageManager));
 }
@@ -34,7 +34,7 @@ static void setting_package_manager_target_should_set_it_correctly(void **state)
     PackageManager* packageManager = definePackageManager("foo", commands, true);
     setCommand(commands, Install, "other install command");
     setPackageManagerInstallCommand(packageManager, commands);
-    assert_string_equal("other install command", getPackageManagerInstallCommand(packageManager));
+    assert_string_equal("other install command", getPackageManagerCommand(packageManager, Install));
 }
 
 static void check_if_package_is_installed_should_work(void **state) {

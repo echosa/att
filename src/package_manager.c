@@ -40,28 +40,22 @@ char* getPackageManagerName(PackageManager* manager) {
     return manager->name;
 }
 
-char* getPackageManagerCleanCommand(PackageManager* manager) {
-    return manager->cleanCommand;
-}
+char* getPackageManagerCommand(PackageManager* manager, enum Action action) {
+    if (action == Clean) {
+        return manager->cleanCommand;
+    } else if (action == Install) {
+        return manager->installCommand;
+    } else if (action == Search) {
+        return manager->searchCommand;
+    } else if (action == SearchExact) {
+        return manager->searchExactCommand;
+    } else if (action == Upgrade) {
+        return manager->upgradeCommand;
+    } else if (action == Which) {
+        return manager->whichCommand;
+    }
 
-char* getPackageManagerInstallCommand(PackageManager* manager) {
-    return manager->installCommand;
-}
-
-char* getPackageManagerSearchCommand(PackageManager* manager) {
-    return manager->searchCommand;
-}
-
-char* getPackageManagerSearchExactCommand(PackageManager* manager) {
-    return manager->searchExactCommand;
-}
-
-char* getPackageManagerUpgradeCommand(PackageManager* manager) {
-    return manager->upgradeCommand;
-}
-
-char* getPackageManagerWhichCommand(PackageManager* manager) {
-    return manager->whichCommand;
+    return "";
 }
 
 void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands) {

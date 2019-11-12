@@ -15,17 +15,17 @@
 char* getCommandForAction(PackageManager* manager, RequestedAction* requestedAction) {
     switch (getRequestedActionAction(requestedAction)) {
     case Clean:
-        return getPackageManagerCleanCommand(manager);
+        return getPackageManagerCommand(manager, Clean);
     case Install:
-        return getPackageManagerInstallCommand(manager);
+        return getPackageManagerCommand(manager, Install);
     case Search:
-        return getPackageManagerSearchCommand(manager);
+        return getPackageManagerCommand(manager, Search);
     case SearchExact:
-        return getPackageManagerSearchExactCommand(manager);
+        return getPackageManagerCommand(manager, SearchExact);
     case Upgrade:
-        return getPackageManagerUpgradeCommand(manager);
+        return getPackageManagerCommand(manager, Upgrade);
     case Which:
-        return getPackageManagerWhichCommand(manager);
+        return getPackageManagerCommand(manager, Which);
     default:
         return "";
     }
