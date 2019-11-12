@@ -2,6 +2,10 @@
 #include "managers/brew.h"
 #include "commands.h"
 
+PackageManager* brew(RequestedAction* requestedAction) {
+    return definePackageManager(BREW, getBrewCommands(getRequestedActionTarget(requestedAction)), getBrew(getRequestedActionManagers(requestedAction)));
+}
+
 Commands* getBrewCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "brew install %s", target);

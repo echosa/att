@@ -2,6 +2,10 @@
 #include "managers/snap.h"
 #include "commands.h"
 
+PackageManager* snap(RequestedAction* requestedAction) {
+    return definePackageManager(SNAP, getSnapCommands(getRequestedActionTarget(requestedAction)), getSnap(getRequestedActionManagers(requestedAction)));
+}
+
 Commands* getSnapCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "snap install %s", target);

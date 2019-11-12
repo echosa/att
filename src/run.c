@@ -3,7 +3,7 @@
 #include <string.h>
 #include "run.h"
 #include "io.h"
-#include "supported_manager.h"
+#include "supported_managers.h"
 #include "requested_action.h"
 #include "managers/apt.h"
 #include "managers/brew.h"

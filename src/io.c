@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "io.h"
-#include "supported_manager.h"
+#include "supported_managers.h"
 #include "commands.h"
 
 void printUsage(char* programName) {

@@ -2,6 +2,10 @@
 #include "managers/flatpak.h"
 #include "commands.h"
 
+PackageManager* flatpak(RequestedAction* requestedAction) {
+    return definePackageManager(FLATPAK, getFlatpakCommands(getRequestedActionTarget(requestedAction)), getFlatpak(getRequestedActionManagers(requestedAction)));
+}
+
 Commands* getFlatpakCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "flatpak install %s", target);

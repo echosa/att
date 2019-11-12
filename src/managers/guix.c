@@ -2,6 +2,10 @@
 #include "managers/guix.h"
 #include "commands.h"
 
+PackageManager* guix(RequestedAction* requestedAction) {
+    return definePackageManager(GUIX, getGuixCommands(getRequestedActionTarget(requestedAction)), getGuix(getRequestedActionManagers(requestedAction)));
+}
+
 Commands* getGuixCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "guix install %s", target);

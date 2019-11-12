@@ -2,6 +2,10 @@
 #include "managers/apt.h"
 #include "commands.h"
 
+PackageManager* apt(RequestedAction* requestedAction) {
+    return definePackageManager(APT, getAptCommands(getRequestedActionTarget(requestedAction)), getApt(getRequestedActionManagers(requestedAction)));
+}
+
 Commands* getAptCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "sudo apt install %s", target);

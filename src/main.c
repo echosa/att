@@ -2,7 +2,7 @@
 #include "io.h"
 #include "requested_action.h"
 #include "package_manager.h"
-#include "supported_manager.h"
+#include "supported_managers.h"
 #include "run.h"
 
 int main(int argc, char *argv[]) {
