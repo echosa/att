@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "../include/guix.h"
-#include "../include/commands.h"
+#include "../../include/managers/guix.h"
+#include "../../include/commands.h"
 
 Commands* getGuixCommands(char* target) {
     char installCommand[COMMAND_LENGTH];

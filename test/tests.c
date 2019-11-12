@@ -3,15 +3,15 @@
 #include <setjmp.h>
 #include <cmocka.h>
 #include "action_tests.c"
-#include "apt_tests.c"
-#include "brew_tests.c"
 #include "commands_tests.c"
-#include "flatpak_tests.c"
-#include "guix_tests.c"
+#include "io_tests.c"
+#include "managers/apt_tests.c"
 #include "package_manager_tests.c"
 #include "managers_tests.c"
-#include "snap_tests.c"
-#include "io_tests.c"
+#include "managers/brew_tests.c"
+#include "managers/flatpak_tests.c"
+#include "managers/guix_tests.c"
+#include "managers/snap_tests.c"
 
 int __wrap_system(const char *command) {
     check_expected(command);

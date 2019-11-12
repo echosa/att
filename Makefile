@@ -1,7 +1,7 @@
 att: src/*.c
-	clang -Wall -Wextra -pedantic -o bin/att src/*.c
+	find src -type f -iname "*.c"|xargs clang -Wall -Wextra -pedantic -o bin/att
 debug: src/*.c
-	clang -g -O0 -Wall -Wextra -pedantic -o bin/att src/*.c
+	find src -type f -iname "*.c"|xargs clang -g -O0 -Wall -Wextra -pedantic -o bin/att
 check:
 	cppcheck -i.ccls-cache .
 test: 
