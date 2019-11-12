@@ -10,10 +10,10 @@
 typedef struct PackageManager PackageManager;
 
 PackageManager* definePackageManager(const char name[], Commands* commands, bool enabled);
-bool isPackageManagerInstalled(PackageManager* manager);
-char* getPackageManagerName(PackageManager* manager);
-Commands* getPackageManagerCommands(PackageManager* manager);
-void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands);
-bool isPackageManagerEnabled(PackageManager* manager);
+bool isPackageManagerInstalled(PackageManager* packageManager);
+char* getPackageManagerName(PackageManager* packageManager);
+Commands* getPackageManagerCommands(PackageManager* packageManager);
+void setPackageManagerInstallCommand(PackageManager* packageManager, Commands* commands);
+bool isPackageManagerEnabled(PackageManager* packageManager);
 
 #endif

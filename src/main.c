@@ -26,14 +26,14 @@ int main(int argc, char *argv[]) {
         return EXIT_SUCCESS;
     }
 
-    PackageManager* managers[] = {
+    PackageManager* packageManagers[] = {
         apt(requestedAction),
         brew(requestedAction),
         flatpak(requestedAction),
         guix(requestedAction),
         snap(requestedAction)
     };
-    executeAction(managers, requestedAction);
+    executeAction(packageManagers, requestedAction);
 
     return EXIT_SUCCESS;
 }

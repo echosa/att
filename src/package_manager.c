@@ -11,17 +11,17 @@ struct PackageManager {
 };
 
 PackageManager* definePackageManager(const char name[], Commands* commands, bool enabled) {
-    PackageManager* manager = (PackageManager*)(malloc(sizeof(PackageManager)));
-    strncpy(manager->name, name, NAME_LENGTH);
-    manager->commands = commands;
-    manager->enabled = enabled;
+    PackageManager* packageManager = (PackageManager*)(malloc(sizeof(PackageManager)));
+    strncpy(packageManager->name, name, NAME_LENGTH);
+    packageManager->commands = commands;
+    packageManager->enabled = enabled;
 
-    return manager;
+    return packageManager;
 }
 
-bool isPackageManagerInstalled(PackageManager* manager) {
+bool isPackageManagerInstalled(PackageManager* packageManager) {
     char installedCheck[INSTALL_CHECK_LENGTH];
-    snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", manager->name);
+    snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", packageManager->name);
 
     return system(installedCheck) == 0;
 }
