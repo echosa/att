@@ -23,9 +23,11 @@ Using `att` is pretty straight forward. Examples include:
 ```
 $ att search emacs # Search all managers for a package
 $ att search --exact emacs # This is an exact search
-$ att upgrade # Update and upgrade all packages in all managers
+$ att update # Update all managers
+$ att upgrade # Upgrade all packages in all managers
 $ att clean # Clean packages in all managers
 $ att clean --managers=apt,flatpak # Only clean packages in apt and flatpak
+$ att which # Show the output of `which` for all package managers
 ```
 
 Note: Only package managers that are installed on your system will attempt to run, in order to reduce output and noise.

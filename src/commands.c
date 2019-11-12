@@ -7,6 +7,7 @@ struct Commands {
     char install[COMMAND_LENGTH];
     char search[COMMAND_LENGTH];
     char searchExact[COMMAND_LENGTH];
+    char update[COMMAND_LENGTH];
     char upgrade[COMMAND_LENGTH];
     char which[COMMAND_LENGTH];
 };
@@ -26,6 +27,8 @@ void setCommandString(Commands *commands, enum Action action, char* command) {
         strncpy(commands->search, command, COMMAND_LENGTH);
     } else if (action == SearchExact) {
         strncpy(commands->searchExact, command, COMMAND_LENGTH);
+    } else if (action == Update) {
+        strncpy(commands->update, command, COMMAND_LENGTH);
     } else if (action == Upgrade) {
         strncpy(commands->upgrade, command, COMMAND_LENGTH);
     } else if (action == Which) {
@@ -42,6 +45,8 @@ char* getCommandString(Commands *commands, enum Action action) {
         return commands->search;
     } else if (action == SearchExact) {
         return commands->searchExact;
+    } else if (action == Update) {
+        return commands->update;
     } else if (action == Upgrade) {
         return commands->upgrade;
     } else if (action == Which) {

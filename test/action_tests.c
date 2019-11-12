@@ -28,6 +28,12 @@ static void search_exact_action_should_parse_correctly(void **state) {
     assert_int_equal(action, SearchExact);
 }
 
+static void update_action_should_parse_correctly(void **state) {
+    (void) state; /* unused */
+    enum Action action = parseAction((char*) UPDATE_ACTION, false);
+    assert_int_equal(action, Update);
+}
+
 static void upgrade_action_should_parse_correctly(void **state) {
     (void) state; /* unused */
     enum Action action = parseAction((char*) UPGRADE_ACTION, false);

@@ -19,7 +19,8 @@ Commands* getAptCommands(char* target) {
     setCommandString(commands, Install, installCommand);
     setCommandString(commands, Search, searchCommand);
     setCommandString(commands, SearchExact, searchExactCommand);
-    setCommandString(commands, Upgrade, "sudo apt update; sudo apt upgrade");
+    setCommandString(commands, Update, "sudo apt update");
+    setCommandString(commands, Upgrade, "sudo apt upgrade");
     setCommandString(commands, Which, "which apt");
 
     return commands;

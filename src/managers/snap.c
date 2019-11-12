@@ -19,6 +19,7 @@ Commands* getSnapCommands(char* target) {
     setCommandString(commands, Install, installCommand);
     setCommandString(commands, Search, searchCommand);
     setCommandString(commands, SearchExact, searchExactCommand);
+    setCommandString(commands, Upgrade, "");
     setCommandString(commands, Upgrade, "sudo snap refresh");
     setCommandString(commands, Which, "which snap");
 
