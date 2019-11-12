@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "../include/commands.h"
+#include "commands.h"
 
 struct Commands {
     char clean[COMMAND_LENGTH];
@@ -17,50 +17,36 @@ Commands* commands_new() {
     return commands;
 }
 
-void setCleanCommand(Commands *commands, char* command) {
-    strncpy(commands->clean, command, COMMAND_LENGTH);
+void setCommand(Commands *commands, enum Action action, char* command) {
+    if (action == Clean) {
+        strncpy(commands->clean, command, COMMAND_LENGTH);
+    } else if (action == Install) {
+        strncpy(commands->install, command, COMMAND_LENGTH);
+    } else if (action == Search) {
+        strncpy(commands->search, command, COMMAND_LENGTH);
+    } else if (action == SearchExact) {
+        strncpy(commands->searchExact, command, COMMAND_LENGTH);
+    } else if (action == Upgrade) {
+        strncpy(commands->upgrade, command, COMMAND_LENGTH);
+    } else if (action == Which) {
+        strncpy(commands->which, command, COMMAND_LENGTH);
+    }
 }
 
-void setInstallCommand(Commands *commands, char* command) {
-    strncpy(commands->install, command, COMMAND_LENGTH);
-}
+char* getCommand(Commands *commands, enum Action action) {
+    if (action == Clean) {
+        return commands->clean;
+    } else if (action == Install) {
+        return commands->install;
+    } else if (action == Search) {
+        return commands->search;
+    } else if (action == SearchExact) {
+        return commands->searchExact;
+    } else if (action == Upgrade) {
+        return commands->upgrade;
+    } else if (action == Which) {
+        return commands->which;
+    }
 
-void setSearchCommand(Commands *commands, char* command) {
-    strncpy(commands->search, command, COMMAND_LENGTH);
-}
-
-void setSearchExactCommand(Commands *commands, char* command) {
-    strncpy(commands->searchExact, command, COMMAND_LENGTH);
-}
-
-void setUpgradeCommand(Commands *commands, char* command) {
-    strncpy(commands->upgrade, command, COMMAND_LENGTH);
-}
-
-void setWhichCommand(Commands *commands, char* command) {
-    strncpy(commands->which, command, COMMAND_LENGTH);
-}
-
-char* getCleanCommand(Commands *commands) {
-    return commands->clean;
-}
-
-char* getInstallCommand(Commands *commands) {
-    return commands->install;
-}
-
-char* getSearchCommand(Commands *commands) {
-    return commands->search;
-}
-
-char* getSearchExactCommand(Commands *commands) {
-    return commands->searchExact;
-}
-
-char* getUpgradeCommand(Commands *commands) {
-    return commands->upgrade;
-}
-
-char* getWhichCommand(Commands *commands) {
-    return commands->which;
+    return "";
 }

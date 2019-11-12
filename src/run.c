@@ -1,31 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/run.h"
-#include "../include/io.h"
-#include "../include/supported_manager.h"
-#include "../include/requested_action.h"
-#include "../include/apt.h"
-#include "../include/brew.h"
-#include "../include/flatpak.h"
-#include "../include/guix.h"
-#include "../include/snap.h"
-#include "../include/package_manager.h"
+#include "run.h"
+#include "io.h"
+#include "supported_manager.h"
+#include "requested_action.h"
+#include "managers/apt.h"
+#include "managers/brew.h"
+#include "managers/flatpak.h"
+#include "managers/guix.h"
+#include "managers/snap.h"
+#include "package_manager.h"
 
 char* getCommandForAction(PackageManager* manager, RequestedAction* requestedAction) {
     switch (getRequestedActionAction(requestedAction)) {
     case Clean:
-        return getPackageManagerCleanCommand(manager);
+        return getPackageManagerCommand(manager, Clean);
     case Install:
-        return getPackageManagerInstallCommand(manager);
+        return getPackageManagerCommand(manager, Install);
     case Search:
-        return getPackageManagerSearchCommand(manager);
+        return getPackageManagerCommand(manager, Search);
     case SearchExact:
-        return getPackageManagerSearchExactCommand(manager);
+        return getPackageManagerCommand(manager, SearchExact);
     case Upgrade:
-        return getPackageManagerUpgradeCommand(manager);
+        return getPackageManagerCommand(manager, Upgrade);
     case Which:
-        return getPackageManagerWhichCommand(manager);
+        return getPackageManagerCommand(manager, Which);
     default:
         return "";
     }

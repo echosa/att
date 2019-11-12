@@ -1,10 +1,10 @@
 #include <string.h>
-#include "../include/supported_manager.h"
-#include "../include/apt.h"
-#include "../include/brew.h"
-#include "../include/flatpak.h"
-#include "../include/guix.h"
-#include "../include/snap.h"
+#include "supported_manager.h"
+#include "managers/apt.h"
+#include "managers/brew.h"
+#include "managers/flatpak.h"
+#include "managers/guix.h"
+#include "managers/snap.h"
 
 enum SupportedManager getManagerIndex(char* managerName) {
     if (strcmp(managerName, APT) == 0) {

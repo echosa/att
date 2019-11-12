@@ -1,12 +1,12 @@
 #include <stdlib.h>
 #include <string.h>
-#include "../include/requested_action.h"
-#include "../include/options.h"
-#include "../include/apt.h"
-#include "../include/brew.h"
-#include "../include/flatpak.h"
-#include "../include/guix.h"
-#include "../include/snap.h"
+#include "requested_action.h"
+#include "options.h"
+#include "managers/apt.h"
+#include "managers/brew.h"
+#include "managers/flatpak.h"
+#include "managers/guix.h"
+#include "managers/snap.h"
 
 struct RequestedAction {
     Managers* managers;

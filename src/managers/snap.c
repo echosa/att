@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "../include/snap.h"
-#include "../include/commands.h"
+#include "managers/snap.h"
+#include "commands.h"
 
 Commands* getSnapCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
@@ -11,12 +11,12 @@ Commands* getSnapCommands(char* target) {
     snprintf(searchExactCommand, COMMAND_LENGTH, "snap find %s", target);
 
     Commands* commands = commands_new();
-    setCleanCommand(commands, "");
-    setInstallCommand(commands, installCommand);
-    setSearchCommand(commands, searchCommand);
-    setSearchExactCommand(commands, searchExactCommand);
-    setUpgradeCommand(commands, "sudo snap refresh");
-    setWhichCommand(commands, "which snap");
+    setCommand(commands, Clean, "");
+    setCommand(commands, Install, installCommand);
+    setCommand(commands, Search, searchCommand);
+    setCommand(commands, SearchExact, searchExactCommand);
+    setCommand(commands, Upgrade, "sudo snap refresh");
+    setCommand(commands, Which, "which snap");
 
     return commands;
 }

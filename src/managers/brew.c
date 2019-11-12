@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "../include/brew.h"
-#include "../include/commands.h"
+#include "managers/brew.h"
+#include "commands.h"
 
 Commands* getBrewCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
@@ -11,12 +11,12 @@ Commands* getBrewCommands(char* target) {
     snprintf(searchExactCommand, COMMAND_LENGTH, "brew search /^%s$/", target);
 
     Commands* commands = commands_new();
-    setCleanCommand(commands, "brew cleanup");
-    setInstallCommand(commands, installCommand);
-    setSearchCommand(commands, searchCommand);
-    setSearchExactCommand(commands, searchExactCommand);
-    setUpgradeCommand(commands, "brew update; brew upgrade");
-    setWhichCommand(commands, "which brew");
+    setCommand(commands, Clean, "brew cleanup");
+    setCommand(commands, Install, installCommand);
+    setCommand(commands, Search, searchCommand);
+    setCommand(commands, SearchExact, searchExactCommand);
+    setCommand(commands, Upgrade, "brew update; brew upgrade");
+    setCommand(commands, Which, "which brew");
 
     return commands;
 }

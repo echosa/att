@@ -1,9 +1,9 @@
 #include <stdlib.h>
-#include "../include/io.h"
-#include "../include/requested_action.h"
-#include "../include/package_manager.h"
-#include "../include/supported_manager.h"
-#include "../include/run.h"
+#include "io.h"
+#include "requested_action.h"
+#include "package_manager.h"
+#include "supported_manager.h"
+#include "run.h"
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {

@@ -4,7 +4,7 @@
 #include <cmocka.h>
 #include <string.h>
 #include <stdbool.h>
-#include "../include/managers.h"
+#include "managers.h"
 
 static void setting_all_managers_should_enable_all_managers(void **state) {
     (void) state; /* unused */

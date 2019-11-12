@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "../include/io.h"
-#include "../include/supported_manager.h"
-#include "../include/commands.h"
+#include "io.h"
+#include "supported_manager.h"
+#include "commands.h"
 
 void printUsage(char* programName) {
     printf("Usage:\n");

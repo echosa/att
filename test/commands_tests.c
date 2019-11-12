@@ -3,52 +3,52 @@
 #include <setjmp.h>
 #include <cmocka.h>
 #include <string.h>
-#include "../include/commands.h"
+#include "commands.h"
 
 static void setting_and_getting_clean_command_should_be_correct(void **state) {
     (void) state; /* unused */
     char command[] = "foobar";
     Commands* commands = commands_new();
-    setCleanCommand(commands, command);
-    assert_int_equal(0, strcmp(getCleanCommand(commands), command));
+    setCommand(commands, Clean, command);
+    assert_int_equal(0, strcmp(getCommand(commands, Clean), command));
 }
 
 static void setting_and_getting_install_command_should_be_correct(void **state) {
     (void) state; /* unused */
     char command[] = "foobar";
     Commands* commands = commands_new();
-    setInstallCommand(commands, command);
-    assert_int_equal(0, strcmp(getInstallCommand(commands), command));
+    setCommand(commands, Install, command);
+    assert_int_equal(0, strcmp(getCommand(commands, Install), command));
 }
 
 static void setting_and_getting_search_command_should_be_correct(void **state) {
     (void) state; /* unused */
     char command[] = "foobar";
     Commands* commands = commands_new();
-    setSearchCommand(commands, command);
-    assert_int_equal(0, strcmp(getSearchCommand(commands), command));
+    setCommand(commands, Search, command);
+    assert_int_equal(0, strcmp(getCommand(commands, Search), command));
 }
 
 static void setting_and_getting_search_exact_command_should_be_correct(void **state) {
     (void) state; /* unused */
     char command[] = "foobar";
     Commands* commands = commands_new();
-    setSearchExactCommand(commands, command);
-    assert_int_equal(0, strcmp(getSearchExactCommand(commands), command));
+    setCommand(commands, SearchExact, command);
+    assert_int_equal(0, strcmp(getCommand(commands, SearchExact), command));
 }
 
 static void setting_and_getting_upgrade_command_should_be_correct(void **state) {
     (void) state; /* unused */
     char command[] = "foobar";
     Commands* commands = commands_new();
-    setUpgradeCommand(commands, command);
-    assert_int_equal(0, strcmp(getUpgradeCommand(commands), command));
+    setCommand(commands, Upgrade, command);
+    assert_int_equal(0, strcmp(getCommand(commands, Upgrade), command));
 }
 
 static void setting_and_getting_which_command_should_be_correct(void **state) {
     (void) state; /* unused */
     char command[] = "foobar";
     Commands* commands = commands_new();
-    setWhichCommand(commands, command);
-    assert_int_equal(0, strcmp(getWhichCommand(commands), command));
+    setCommand(commands, Which, command);
+    assert_int_equal(0, strcmp(getCommand(commands, Which), command));
 }

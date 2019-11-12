@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "../include/apt.h"
-#include "../include/commands.h"
+#include "managers/apt.h"
+#include "commands.h"
 
 Commands* getAptCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
@@ -11,12 +11,12 @@ Commands* getAptCommands(char* target) {
     snprintf(searchExactCommand, COMMAND_LENGTH, "apt search ^%s$", target);
 
     Commands* commands = commands_new();
-    setCleanCommand(commands, "sudo apt autoremove");
-    setInstallCommand(commands, installCommand);
-    setSearchCommand(commands, searchCommand);
-    setSearchExactCommand(commands, searchExactCommand);
-    setUpgradeCommand(commands, "sudo apt update; sudo apt upgrade");
-    setWhichCommand(commands, "which apt");
+    setCommand(commands, Clean, "sudo apt autoremove");
+    setCommand(commands, Install, installCommand);
+    setCommand(commands, Search, searchCommand);
+    setCommand(commands, SearchExact, searchExactCommand);
+    setCommand(commands, Upgrade, "sudo apt update; sudo apt upgrade");
+    setCommand(commands, Which, "which apt");
 
     return commands;
 }
