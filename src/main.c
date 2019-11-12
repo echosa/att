@@ -2,7 +2,7 @@
 #include "io.h"
 #include "requested_action.h"
 #include "package_manager.h"
-#include "supported_manager.h"
+#include "supported_managers.h"
 #include "run.h"
 
 int main(int argc, char *argv[]) {
@@ -26,14 +26,14 @@ int main(int argc, char *argv[]) {
         return EXIT_SUCCESS;
     }
 
-    PackageManager* managers[] = {
+    PackageManager* packageManagers[] = {
         apt(requestedAction),
         brew(requestedAction),
         flatpak(requestedAction),
         guix(requestedAction),
         snap(requestedAction)
     };
-    executeAction(managers, requestedAction);
+    executeAction(packageManagers, requestedAction);
 
     return EXIT_SUCCESS;
 }

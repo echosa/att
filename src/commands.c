@@ -17,7 +17,7 @@ Commands* commands_new() {
     return commands;
 }
 
-void setCommand(Commands *commands, enum Action action, char* command) {
+void setCommandString(Commands *commands, enum Action action, char* command) {
     if (action == Clean) {
         strncpy(commands->clean, command, COMMAND_LENGTH);
     } else if (action == Install) {
@@ -33,7 +33,7 @@ void setCommand(Commands *commands, enum Action action, char* command) {
     }
 }
 
-char* getCommand(Commands *commands, enum Action action) {
+char* getCommandString(Commands *commands, enum Action action) {
     if (action == Clean) {
         return commands->clean;
     } else if (action == Install) {

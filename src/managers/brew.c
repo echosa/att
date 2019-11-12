@@ -2,6 +2,10 @@
 #include "managers/brew.h"
 #include "commands.h"
 
+PackageManager* brew(RequestedAction* requestedAction) {
+    return definePackageManager(BREW, getBrewCommands(getRequestedActionTarget(requestedAction)), getBrew(getRequestedActionManagers(requestedAction)));
+}
+
 Commands* getBrewCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "brew install %s", target);
@@ -11,12 +15,12 @@ Commands* getBrewCommands(char* target) {
     snprintf(searchExactCommand, COMMAND_LENGTH, "brew search /^%s$/", target);
 
     Commands* commands = commands_new();
-    setCommand(commands, Clean, "brew cleanup");
-    setCommand(commands, Install, installCommand);
-    setCommand(commands, Search, searchCommand);
-    setCommand(commands, SearchExact, searchExactCommand);
-    setCommand(commands, Upgrade, "brew update; brew upgrade");
-    setCommand(commands, Which, "which brew");
+    setCommandString(commands, Clean, "brew cleanup");
+    setCommandString(commands, Install, installCommand);
+    setCommandString(commands, Search, searchCommand);
+    setCommandString(commands, SearchExact, searchExactCommand);
+    setCommandString(commands, Upgrade, "brew update; brew upgrade");
+    setCommandString(commands, Which, "which brew");
 
     return commands;
 }

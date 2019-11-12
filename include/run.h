@@ -4,6 +4,6 @@
 #include "package_manager.h"
 #include "requested_action.h"
 
-void executeAction(PackageManager* managers[], RequestedAction* requestedAction);
-    
+void executeAction(PackageManager* packageManagers[], RequestedAction* requestedAction);
+
 #endif

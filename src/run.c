@@ -3,7 +3,7 @@
 #include <string.h>
 #include "run.h"
 #include "io.h"
-#include "supported_manager.h"
+#include "supported_managers.h"
 #include "requested_action.h"
 #include "managers/apt.h"
 #include "managers/brew.h"
@@ -12,33 +12,19 @@
 #include "managers/snap.h"
 #include "package_manager.h"
 
-char* getCommandForAction(PackageManager* manager, RequestedAction* requestedAction) {
-    switch (getRequestedActionAction(requestedAction)) {
-    case Clean:
-        return getPackageManagerCommand(manager, Clean);
-    case Install:
-        return getPackageManagerCommand(manager, Install);
-    case Search:
-        return getPackageManagerCommand(manager, Search);
-    case SearchExact:
-        return getPackageManagerCommand(manager, SearchExact);
-    case Upgrade:
-        return getPackageManagerCommand(manager, Upgrade);
-    case Which:
-        return getPackageManagerCommand(manager, Which);
-    default:
-        return "";
-    }
+char* getCommandForAction(PackageManager* packageManager, RequestedAction* requestedAction) {
+    Commands* commands = getPackageManagerCommands(packageManager);
+    return getCommandString(commands, getRequestedActionAction(requestedAction));
 }
 
-void runCommandString(PackageManager* manager, char* command, bool isDebug) {
+void runCommandString(PackageManager* packageManager, char* command, bool isDebug) {
     printf(DIVIDER);
     printf(DIVIDER);
-    printf("%s\n", getPackageManagerName(manager));
+    printf("%s\n", getPackageManagerName(packageManager));
     printf(DIVIDER);
 
     if (strcmp(command, "") == 0) {
-        printf("No relevant command for %s\n", getPackageManagerName(manager));
+        printf("No relevant command for %s\n", getPackageManagerName(packageManager));
 
         return;
     }
@@ -49,33 +35,33 @@ void runCommandString(PackageManager* manager, char* command, bool isDebug) {
     }
 }
 
-void runRequestedActionCommand(PackageManager* manager, RequestedAction* requestedAction) {
-    char *command = getCommandForAction(manager, requestedAction);
-    runCommandString(manager, command, isDebug(requestedAction));
+void runRequestedActionCommand(PackageManager* packageManager, RequestedAction* requestedAction) {
+    char *command = getCommandForAction(packageManager, requestedAction);
+    runCommandString(packageManager, command, isDebug(requestedAction));
 }
 
-void runCommandForAllManagers(PackageManager* managers[], RequestedAction* requestedAction) {
+void runCommandForAllManagers(PackageManager* packageManagers[], RequestedAction* requestedAction) {
     for (int i = 0; i < MANAGERS_COUNT; i++) {
-        if (isPackageManagerEnabled(managers[i]) && isPackageManagerInstalled(managers[i])) {
-            runRequestedActionCommand(managers[i], requestedAction);
+        if (isPackageManagerEnabled(packageManagers[i]) && isPackageManagerInstalled(packageManagers[i])) {
+            runRequestedActionCommand(packageManagers[i], requestedAction);
         }
     }
 }
 
-void runPackageSearch(PackageManager* managers[], RequestedAction* requestedAction) {
+void runPackageSearch(PackageManager* packageManagers[], RequestedAction* requestedAction) {
     RequestedAction* searchAction = requested_action_new();
     if (isExactSearch(requestedAction)) {
         setRequestedActionAction(searchAction, SearchExact);
     } else {
         setRequestedActionAction(searchAction, Search);
-    }        
-    runCommandForAllManagers(managers, searchAction);
+    }
+    runCommandForAllManagers(packageManagers, searchAction);
     free(searchAction);
 }
 
-void installPackage(PackageManager* managers[], RequestedAction* requestedAction) {
+void installPackage(PackageManager* packageManagers[], RequestedAction* requestedAction) {
     printf("Searching for package to install...\n");
-    runPackageSearch(managers, requestedAction);
+    runPackageSearch(packageManagers, requestedAction);
 
     printf(DIVIDER);
     printf(DIVIDER);
@@ -90,40 +76,40 @@ void installPackage(PackageManager* managers[], RequestedAction* requestedAction
     scanf("%s", packageChoice);
 
     setRequestedActionTarget(requestedAction, packageChoice);
-    PackageManager* manager = managers[managerIndex];
+    PackageManager* packageManager = packageManagers[managerIndex];
     Commands* commands = NULL;
-    if (strcmp(getPackageManagerName(manager), APT) == 0) {
+    if (strcmp(getPackageManagerName(packageManager), APT) == 0) {
       commands = getAptCommands(packageChoice);
-    } else if (strcmp(getPackageManagerName(manager), BREW) == 0) {
+    } else if (strcmp(getPackageManagerName(packageManager), BREW) == 0) {
       commands = getBrewCommands(packageChoice);
-    } else if (strcmp(getPackageManagerName(manager), FLATPAK) == 0) {
+    } else if (strcmp(getPackageManagerName(packageManager), FLATPAK) == 0) {
       commands = getFlatpakCommands(packageChoice);
-    } else if (strcmp(getPackageManagerName(manager), GUIX) == 0) {
+    } else if (strcmp(getPackageManagerName(packageManager), GUIX) == 0) {
       commands = getGuixCommands(packageChoice);
-    } else if (strcmp(getPackageManagerName(manager), SNAP) == 0) {
+    } else if (strcmp(getPackageManagerName(packageManager), SNAP) == 0) {
       commands = getSnapCommands(packageChoice);
     } else {
         printf("Invalid package manager");
 
         return;
     }
-    setPackageManagerInstallCommand(manager, commands);
+    setPackageManagerInstallCommand(packageManager, commands);
 
-    printf("Installing %s from %s...\n", packageChoice, getPackageManagerName(managers[managerIndex]));
-    runRequestedActionCommand(manager, requestedAction);
+    printf("Installing %s from %s...\n", packageChoice, getPackageManagerName(packageManagers[managerIndex]));
+    runRequestedActionCommand(packageManager, requestedAction);
 }
 
-void executeAction(PackageManager* managers[], RequestedAction* requestedAction) {
+void executeAction(PackageManager* packageManagers[], RequestedAction* requestedAction) {
     if (getRequestedActionAction(requestedAction) == Install) {
-        installPackage(managers, requestedAction);
+        installPackage(packageManagers, requestedAction);
     } else {
-        runCommandForAllManagers(managers, requestedAction);
+        runCommandForAllManagers(packageManagers, requestedAction);
     }
 
     free(getRequestedActionManagers(requestedAction));
     free(requestedAction);
     for (int i = 0; i < MANAGERS_COUNT; i++) {
-        free(managers[i]);
+        free(packageManagers[i]);
     }
 }
 

@@ -6,62 +6,38 @@
 
 struct PackageManager {
     char name[NAME_LENGTH];
-    char cleanCommand[COMMAND_LENGTH];
-    char installCommand[COMMAND_LENGTH];
-    char searchCommand[COMMAND_LENGTH];
-    char searchExactCommand[COMMAND_LENGTH];
-    char upgradeCommand[COMMAND_LENGTH];
-    char whichCommand[COMMAND_LENGTH];
+    Commands* commands;
     bool enabled;
 };
 
 PackageManager* definePackageManager(const char name[], Commands* commands, bool enabled) {
-    PackageManager* manager = (PackageManager*)(malloc(sizeof(PackageManager)));
-    strncpy(manager->name, name, NAME_LENGTH);
-    strncpy(manager->cleanCommand, getCommand(commands, Clean), COMMAND_LENGTH);
-    strncpy(manager->installCommand, getCommand(commands, Install), COMMAND_LENGTH);
-    strncpy(manager->searchCommand, getCommand(commands, Search), COMMAND_LENGTH);
-    strncpy(manager->searchExactCommand, getCommand(commands, SearchExact), COMMAND_LENGTH);
-    strncpy(manager->upgradeCommand, getCommand(commands, Upgrade), COMMAND_LENGTH);
-    strncpy(manager->whichCommand, getCommand(commands, Which), COMMAND_LENGTH);
-    manager->enabled = enabled;
+    PackageManager* packageManager = (PackageManager*)(malloc(sizeof(PackageManager)));
+    strncpy(packageManager->name, name, NAME_LENGTH);
+    packageManager->commands = commands;
+    packageManager->enabled = enabled;
 
-    return manager;
+    return packageManager;
 }
 
-bool isPackageManagerInstalled(PackageManager* manager) {
+bool isPackageManagerInstalled(PackageManager* packageManager) {
     char installedCheck[INSTALL_CHECK_LENGTH];
-    snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", manager->name);
+    snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", packageManager->name);
 
     return system(installedCheck) == 0;
 }
 
-char* getPackageManagerName(PackageManager* manager) {
-    return manager->name;
+char* getPackageManagerName(PackageManager* packageManager) {
+    return packageManager->name;
 }
 
-char* getPackageManagerCommand(PackageManager* manager, enum Action action) {
-    if (action == Clean) {
-        return manager->cleanCommand;
-    } else if (action == Install) {
-        return manager->installCommand;
-    } else if (action == Search) {
-        return manager->searchCommand;
-    } else if (action == SearchExact) {
-        return manager->searchExactCommand;
-    } else if (action == Upgrade) {
-        return manager->upgradeCommand;
-    } else if (action == Which) {
-        return manager->whichCommand;
-    }
-
-    return "";
+Commands* getPackageManagerCommands(PackageManager* packageManager) {
+    return packageManager->commands;
 }
 
-void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands) {
-    strncpy(manager->installCommand, getCommand(commands, Install), COMMAND_LENGTH);
+void setPackageManagerInstallCommand(PackageManager* packageManager, Commands* commands) {
+    setCommandString(packageManager->commands, Install, getCommandString(commands, Install));
 }
 
-bool isPackageManagerEnabled(PackageManager* manager) {
-    return manager->enabled;
+bool isPackageManagerEnabled(PackageManager* packageManager) {
+    return packageManager->enabled;
 }

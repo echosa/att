@@ -2,6 +2,10 @@
 #include "managers/snap.h"
 #include "commands.h"
 
+PackageManager* snap(RequestedAction* requestedAction) {
+    return definePackageManager(SNAP, getSnapCommands(getRequestedActionTarget(requestedAction)), getSnap(getRequestedActionManagers(requestedAction)));
+}
+
 Commands* getSnapCommands(char* target) {
     char installCommand[COMMAND_LENGTH];
     snprintf(installCommand, COMMAND_LENGTH, "snap install %s", target);
@@ -11,12 +15,12 @@ Commands* getSnapCommands(char* target) {
     snprintf(searchExactCommand, COMMAND_LENGTH, "snap find %s", target);
 
     Commands* commands = commands_new();
-    setCommand(commands, Clean, "");
-    setCommand(commands, Install, installCommand);
-    setCommand(commands, Search, searchCommand);
-    setCommand(commands, SearchExact, searchExactCommand);
-    setCommand(commands, Upgrade, "sudo snap refresh");
-    setCommand(commands, Which, "which snap");
+    setCommandString(commands, Clean, "");
+    setCommandString(commands, Install, installCommand);
+    setCommandString(commands, Search, searchCommand);
+    setCommandString(commands, SearchExact, searchExactCommand);
+    setCommandString(commands, Upgrade, "sudo snap refresh");
+    setCommandString(commands, Which, "which snap");
 
     return commands;
 }
