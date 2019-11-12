@@ -20,7 +20,7 @@ Commands* getBrewCommands(char* target) {
     setCommandString(commands, Search, searchCommand);
     setCommandString(commands, SearchExact, searchExactCommand);
     setCommandString(commands, Update, "brew update");
-    setCommandString(commands, Upgrade, "brew update; brew upgrade");
+    setCommandString(commands, Upgrade, "brew upgrade");
     setCommandString(commands, Which, "which brew");
 
     return commands;

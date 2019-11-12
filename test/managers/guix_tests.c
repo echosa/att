@@ -14,6 +14,6 @@ static void guix_commands_should_be_correct(void **state) {
     assert_int_equal(0, strcmp(getCommandString(commands, Search), "guix package -A emacs"));
     assert_int_equal(0, strcmp(getCommandString(commands, SearchExact), "guix package -A ^emacs$"));
     assert_int_equal(0, strcmp(getCommandString(commands, Update), "guix pull"));
-    assert_int_equal(0, strcmp(getCommandString(commands, Upgrade), "guix pull; guix package -u"));
+    assert_int_equal(0, strcmp(getCommandString(commands, Upgrade), "guix package -u"));
     assert_int_equal(0, strcmp(getCommandString(commands, Which), "which guix"));
 }
