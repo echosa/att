@@ -1,7 +1,7 @@
-CLANG=clang -Wall -Wextra -pedantic -Iinclude
+CLANG=clang -Wall -Wextra -pedantic -I include
 CLANG_TESTS=$(CLANG) -l cmocka -Wl,--wrap=system
 CLANG_COVERAGE=$(CLANG_TESTS) --coverage
-CLANG_CHECK_SYNTAX=clang -l cmocka -Iinclude -o /dev/null -S ${CHK_SOURCES}
+CLANG_CHECK_SYNTAX=$(CLANG) -l cmocka -o /dev/null -S ${CHK_SOURCES}
 
 att: src/*.c
 	find src -type f -iname "*.c"|xargs $(CLANG) -o bin/att

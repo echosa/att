@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "../include/commands.h"
+#include "commands.h"
 
 struct Commands {
     char clean[COMMAND_LENGTH];

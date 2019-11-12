@@ -3,7 +3,7 @@
 #include <setjmp.h>
 #include <cmocka.h>
 #include <string.h>
-#include "../include/commands.h"
+#include "commands.h"
 
 static void setting_and_getting_clean_command_should_be_correct(void **state) {
     (void) state; /* unused */

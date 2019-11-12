@@ -3,8 +3,8 @@
 #include <setjmp.h>
 #include <cmocka.h>
 #include <string.h>
-#include "../../include/managers/apt.h"
-#include "../../include/commands.h"
+#include "managers/apt.h"
+#include "commands.h"
 
 static void apt_commands_should_be_correct(void **state) {
     (void) state; /* unused */

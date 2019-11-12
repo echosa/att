@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "../../include/managers/brew.h"
-#include "../../include/commands.h"
+#include "managers/brew.h"
+#include "commands.h"
 
 Commands* getBrewCommands(char* target) {
     char installCommand[COMMAND_LENGTH];

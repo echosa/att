@@ -1,7 +1,7 @@
 #ifndef GUIX_H_
 #define GUIX_H_
 
-#include "../commands.h"
+#include "commands.h"
 
 static const char GUIX[] = "guix";
 

@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "../../include/managers/snap.h"
-#include "../../include/commands.h"
+#include "managers/snap.h"
+#include "commands.h"
 
 Commands* getSnapCommands(char* target) {
     char installCommand[COMMAND_LENGTH];

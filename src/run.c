@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/run.h"
-#include "../include/io.h"
-#include "../include/supported_manager.h"
-#include "../include/requested_action.h"
-#include "../include/managers/apt.h"
-#include "../include/managers/brew.h"
-#include "../include/managers/flatpak.h"
-#include "../include/managers/guix.h"
-#include "../include/managers/snap.h"
-#include "../include/package_manager.h"
+#include "run.h"
+#include "io.h"
+#include "supported_manager.h"
+#include "requested_action.h"
+#include "managers/apt.h"
+#include "managers/brew.h"
+#include "managers/flatpak.h"
+#include "managers/guix.h"
+#include "managers/snap.h"
+#include "package_manager.h"
 
 char* getCommandForAction(PackageManager* manager, RequestedAction* requestedAction) {
     switch (getRequestedActionAction(requestedAction)) {

@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/package_manager.h"
-#include "../include/commands.h"
+#include "package_manager.h"
+#include "commands.h"
 
 struct PackageManager {
     char name[NAME_LENGTH];

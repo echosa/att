@@ -3,8 +3,8 @@
 #include <setjmp.h>
 #include <cmocka.h>
 #include <string.h>
-#include "../../include/managers/flatpak.h"
-#include "../../include/commands.h"
+#include "managers/flatpak.h"
+#include "commands.h"
 
 static void flatpak_commands_should_be_correct(void **state) {
     (void) state; /* unused */
