@@ -16,6 +16,7 @@ Commands* getSnapCommands(char* target) {
     setSearchCommand(commands, searchCommand);
     setSearchExactCommand(commands, searchExactCommand);
     setUpgradeCommand(commands, "sudo snap refresh");
+    setWhichCommand(commands, "which snap");
 
     return commands;
 }

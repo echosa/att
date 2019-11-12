@@ -15,12 +15,14 @@ static void defining_package_manager_should_set_all_things_correctly(void **stat
     setSearchCommand(commands, "search command");
     setSearchExactCommand(commands, "search exact command");
     setUpgradeCommand(commands, "upgrade command");
+    setWhichCommand(commands, "which command");
     PackageManager* packageManager = definePackageManager("foo", commands, true);
     assert_string_equal("clean command", getPackageManagerCleanCommand(packageManager));
     assert_string_equal("install command", getPackageManagerInstallCommand(packageManager));
     assert_string_equal("search command", getPackageManagerSearchCommand(packageManager));
     assert_string_equal("search exact command", getPackageManagerSearchExactCommand(packageManager));
     assert_string_equal("upgrade command", getPackageManagerUpgradeCommand(packageManager));
+    assert_string_equal("which command", getPackageManagerWhichCommand(packageManager));
     assert_true(isPackageManagerEnabled(packageManager));
     assert_string_equal("foo", getPackageManagerName(packageManager));
 }

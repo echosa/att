@@ -14,4 +14,5 @@ static void flatpak_commands_should_be_correct(void **state) {
     assert_int_equal(0, strcmp(getSearchCommand(commands), "flatpak search emacs"));
     assert_int_equal(0, strcmp(getSearchExactCommand(commands), "flatpak search emacs"));
     assert_int_equal(0, strcmp(getUpgradeCommand(commands), "flatpak update"));
+    assert_int_equal(0, strcmp(getWhichCommand(commands), "which flatpak"));
 }

@@ -8,6 +8,7 @@ struct Commands {
     char search[COMMAND_LENGTH];
     char searchExact[COMMAND_LENGTH];
     char upgrade[COMMAND_LENGTH];
+    char which[COMMAND_LENGTH];
 };
 
 Commands* commands_new() {
@@ -36,6 +37,10 @@ void setUpgradeCommand(Commands *commands, char* command) {
     strncpy(commands->upgrade, command, COMMAND_LENGTH);
 }
 
+void setWhichCommand(Commands *commands, char* command) {
+    strncpy(commands->which, command, COMMAND_LENGTH);
+}
+
 char* getCleanCommand(Commands *commands) {
     return commands->clean;
 }
@@ -54,4 +59,8 @@ char* getSearchExactCommand(Commands *commands) {
 
 char* getUpgradeCommand(Commands *commands) {
     return commands->upgrade;
+}
+
+char* getWhichCommand(Commands *commands) {
+    return commands->which;
 }

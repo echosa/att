@@ -44,3 +44,11 @@ static void setting_and_getting_upgrade_command_should_be_correct(void **state) 
     setUpgradeCommand(commands, command);
     assert_int_equal(0, strcmp(getUpgradeCommand(commands), command));
 }
+
+static void setting_and_getting_which_command_should_be_correct(void **state) {
+    (void) state; /* unused */
+    char command[] = "foobar";
+    Commands* commands = commands_new();
+    setWhichCommand(commands, command);
+    assert_int_equal(0, strcmp(getWhichCommand(commands), command));
+}

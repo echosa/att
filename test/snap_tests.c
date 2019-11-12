@@ -14,4 +14,5 @@ static void snap_commands_should_be_correct(void **state) {
     assert_int_equal(0, strcmp(getSearchCommand(commands), "snap find emacs"));
     assert_int_equal(0, strcmp(getSearchExactCommand(commands), "snap find emacs"));
     assert_int_equal(0, strcmp(getUpgradeCommand(commands), "sudo snap refresh"));
+    assert_int_equal(0, strcmp(getWhichCommand(commands), "which snap"));
 }

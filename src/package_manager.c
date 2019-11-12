@@ -11,6 +11,7 @@ struct PackageManager {
     char searchCommand[COMMAND_LENGTH];
     char searchExactCommand[COMMAND_LENGTH];
     char upgradeCommand[COMMAND_LENGTH];
+    char whichCommand[COMMAND_LENGTH];
     bool enabled;
 };
 
@@ -22,6 +23,7 @@ PackageManager* definePackageManager(const char name[], Commands* commands, bool
     strncpy(manager->searchCommand, getSearchCommand(commands), COMMAND_LENGTH);
     strncpy(manager->searchExactCommand, getSearchExactCommand(commands), COMMAND_LENGTH);
     strncpy(manager->upgradeCommand, getUpgradeCommand(commands), COMMAND_LENGTH);
+    strncpy(manager->whichCommand, getWhichCommand(commands), COMMAND_LENGTH);
     manager->enabled = enabled;
 
     return manager;
@@ -56,6 +58,10 @@ char* getPackageManagerSearchExactCommand(PackageManager* manager) {
 
 char* getPackageManagerUpgradeCommand(PackageManager* manager) {
     return manager->upgradeCommand;
+}
+
+char* getPackageManagerWhichCommand(PackageManager* manager) {
+    return manager->whichCommand;
 }
 
 void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands) {

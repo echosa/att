@@ -17,6 +17,7 @@ char* getPackageManagerInstallCommand(PackageManager* manager);
 char* getPackageManagerSearchCommand(PackageManager* manager);
 char* getPackageManagerSearchExactCommand(PackageManager* manager);
 char* getPackageManagerUpgradeCommand(PackageManager* manager);
+char* getPackageManagerWhichCommand(PackageManager* manager);
 void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands);
 bool isPackageManagerEnabled(PackageManager* manager);
 
