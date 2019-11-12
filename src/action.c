@@ -8,6 +8,8 @@ enum Action parseAction(char* action, bool exactSearch) {
         return Install;
     } else if (strcmp(action, SEARCH_ACTION) == 0) {
         return exactSearch ? SearchExact : Search;
+    } else if (strcmp(action, UPDATE_ACTION) == 0) {
+        return Update;
     } else if (strcmp(action, UPGRADE_ACTION) == 0) {
         return Upgrade;
     } else if (strcmp(action, WHICH_ACTION) == 0) {

@@ -19,6 +19,7 @@ Commands* getGuixCommands(char* target) {
     setCommandString(commands, Install, installCommand);
     setCommandString(commands, Search, searchCommand);
     setCommandString(commands, SearchExact, searchExactCommand);
+    setCommandString(commands, Update, "guix pull");
     setCommandString(commands, Upgrade, "guix pull; guix package -u");
     setCommandString(commands, Which, "which guix");
 

@@ -19,6 +19,7 @@ Commands* getFlatpakCommands(char* target) {
     setCommandString(commands, Install, installCommand);
     setCommandString(commands, Search, searchCommand);
     setCommandString(commands, SearchExact, searchExactCommand);
+    setCommandString(commands, Update, "");
     setCommandString(commands, Upgrade, "flatpak update");
     setCommandString(commands, Which, "which flatpak");
 

@@ -13,6 +13,7 @@ static void apt_commands_should_be_correct(void **state) {
     assert_int_equal(0, strcmp(getCommandString(commands, Install), "sudo apt install emacs"));
     assert_int_equal(0, strcmp(getCommandString(commands, Search), "apt search emacs"));
     assert_int_equal(0, strcmp(getCommandString(commands, SearchExact), "apt search ^emacs$"));
+    assert_int_equal(0, strcmp(getCommandString(commands, Update), "sudo apt update"));
     assert_int_equal(0, strcmp(getCommandString(commands, Upgrade), "sudo apt update; sudo apt upgrade"));
     assert_int_equal(0, strcmp(getCommandString(commands, Which), "which apt"));
 }

@@ -37,6 +37,14 @@ static void setting_and_getting_search_exact_command_should_be_correct(void **st
     assert_int_equal(0, strcmp(getCommandString(commands, SearchExact), command));
 }
 
+static void setting_and_getting_update_command_should_be_correct(void **state) {
+    (void) state; /* unused */
+    char command[] = "foobar";
+    Commands* commands = commands_new();
+    setCommandString(commands, Update, command);
+    assert_int_equal(0, strcmp(getCommandString(commands, Update), command));
+}
+
 static void setting_and_getting_upgrade_command_should_be_correct(void **state) {
     (void) state; /* unused */
     char command[] = "foobar";
