@@ -14,4 +14,5 @@ static void brew_commands_should_be_correct(void **state) {
     assert_int_equal(0, strcmp(getSearchCommand(commands), "brew search emacs"));
     assert_int_equal(0, strcmp(getSearchExactCommand(commands), "brew search /^emacs$/"));
     assert_int_equal(0, strcmp(getUpgradeCommand(commands), "brew update; brew upgrade"));
+    assert_int_equal(0, strcmp(getWhichCommand(commands), "which brew"));
 }

@@ -10,6 +10,8 @@ enum Action parseAction(char* action, bool exactSearch) {
         return exactSearch ? SearchExact : Search;
     } else if (strcmp(action, UPGRADE_ACTION) == 0) {
         return Upgrade;
+    } else if (strcmp(action, WHICH_ACTION) == 0) {
+        return Which;
     } else {
         return InvalidAction;
     }

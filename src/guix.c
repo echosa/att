@@ -16,6 +16,7 @@ Commands* getGuixCommands(char* target) {
     setSearchCommand(commands, searchCommand);
     setSearchExactCommand(commands, searchExactCommand);
     setUpgradeCommand(commands, "guix pull; guix package -u");
+    setWhichCommand(commands, "which guix");
 
     return commands;
 }

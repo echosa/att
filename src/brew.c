@@ -16,6 +16,7 @@ Commands* getBrewCommands(char* target) {
     setSearchCommand(commands, searchCommand);
     setSearchExactCommand(commands, searchExactCommand);
     setUpgradeCommand(commands, "brew update; brew upgrade");
+    setWhichCommand(commands, "which brew");
 
     return commands;
 }

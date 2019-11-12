@@ -16,6 +16,7 @@ Commands* getFlatpakCommands(char* target) {
     setSearchCommand(commands, searchCommand);
     setSearchExactCommand(commands, searchExactCommand);
     setUpgradeCommand(commands, "flatpak update");
+    setWhichCommand(commands, "which flatpak");
 
     return commands;
 }

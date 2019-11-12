@@ -24,18 +24,18 @@ char* getCommandForAction(PackageManager* manager, RequestedAction* requestedAct
         return getPackageManagerSearchExactCommand(manager);
     case Upgrade:
         return getPackageManagerUpgradeCommand(manager);
+    case Which:
+        return getPackageManagerWhichCommand(manager);
     default:
         return "";
     }
 }
 
-void runCommand(PackageManager* manager, RequestedAction* requestedAction) {
+void runCommandString(PackageManager* manager, char* command, bool isDebug) {
     printf(DIVIDER);
     printf(DIVIDER);
     printf("%s\n", getPackageManagerName(manager));
     printf(DIVIDER);
-
-    char *command = getCommandForAction(manager, requestedAction);
 
     if (strcmp(command, "") == 0) {
         printf("No relevant command for %s\n", getPackageManagerName(manager));
@@ -44,15 +44,20 @@ void runCommand(PackageManager* manager, RequestedAction* requestedAction) {
     }
 
     printf("%s\n", command);
-    if (!isDebug(requestedAction)) {
+    if (!isDebug) {
         system(command);
     }
+}
+
+void runRequestedActionCommand(PackageManager* manager, RequestedAction* requestedAction) {
+    char *command = getCommandForAction(manager, requestedAction);
+    runCommandString(manager, command, isDebug(requestedAction));
 }
 
 void runCommandForAllManagers(PackageManager* managers[], RequestedAction* requestedAction) {
     for (int i = 0; i < MANAGERS_COUNT; i++) {
         if (isPackageManagerEnabled(managers[i]) && isPackageManagerInstalled(managers[i])) {
-            runCommand(managers[i], requestedAction);
+            runRequestedActionCommand(managers[i], requestedAction);
         }
     }
 }
@@ -105,7 +110,7 @@ void installPackage(PackageManager* managers[], RequestedAction* requestedAction
     setPackageManagerInstallCommand(manager, commands);
 
     printf("Installing %s from %s...\n", packageChoice, getPackageManagerName(managers[managerIndex]));
-    runCommand(manager, requestedAction);
+    runRequestedActionCommand(manager, requestedAction);
 }
 
 void executeAction(PackageManager* managers[], RequestedAction* requestedAction) {
