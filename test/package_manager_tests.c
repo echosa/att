@@ -10,12 +10,12 @@
 static void defining_package_manager_should_set_all_things_correctly(void **state) {
     (void) state; /* unused */
     Commands* commands = commands_new();
-    setCleanCommand(commands, "clean command");
-    setInstallCommand(commands, "install command");
-    setSearchCommand(commands, "search command");
-    setSearchExactCommand(commands, "search exact command");
-    setUpgradeCommand(commands, "upgrade command");
-    setWhichCommand(commands, "which command");
+    setCommand(commands, Clean, "clean command");
+    setCommand(commands, Install, "install command");
+    setCommand(commands, Search, "search command");
+    setCommand(commands, SearchExact, "search exact command");
+    setCommand(commands, Upgrade, "upgrade command");
+    setCommand(commands, Which, "which command");
     PackageManager* packageManager = definePackageManager("foo", commands, true);
     assert_string_equal("clean command", getPackageManagerCleanCommand(packageManager));
     assert_string_equal("install command", getPackageManagerInstallCommand(packageManager));
@@ -30,9 +30,9 @@ static void defining_package_manager_should_set_all_things_correctly(void **stat
 static void setting_package_manager_target_should_set_it_correctly(void **state) {
     (void) state; /* unused */
     Commands* commands = commands_new();
-    setInstallCommand(commands, "install command");
+    setCommand(commands, Install, "install command");
     PackageManager* packageManager = definePackageManager("foo", commands, true);
-    setInstallCommand(commands, "other install command");
+    setCommand(commands, Install, "other install command");
     setPackageManagerInstallCommand(packageManager, commands);
     assert_string_equal("other install command", getPackageManagerInstallCommand(packageManager));
 }

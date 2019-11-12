@@ -9,10 +9,10 @@
 static void snap_commands_should_be_correct(void **state) {
     (void) state; /* unused */
     Commands* commands = getSnapCommands("emacs");
-    assert_int_equal(0, strcmp(getCleanCommand(commands), ""));
-    assert_int_equal(0, strcmp(getInstallCommand(commands), "snap install emacs"));
-    assert_int_equal(0, strcmp(getSearchCommand(commands), "snap find emacs"));
-    assert_int_equal(0, strcmp(getSearchExactCommand(commands), "snap find emacs"));
-    assert_int_equal(0, strcmp(getUpgradeCommand(commands), "sudo snap refresh"));
-    assert_int_equal(0, strcmp(getWhichCommand(commands), "which snap"));
+    assert_int_equal(0, strcmp(getCommand(commands, Clean), ""));
+    assert_int_equal(0, strcmp(getCommand(commands, Install), "snap install emacs"));
+    assert_int_equal(0, strcmp(getCommand(commands, Search), "snap find emacs"));
+    assert_int_equal(0, strcmp(getCommand(commands, SearchExact), "snap find emacs"));
+    assert_int_equal(0, strcmp(getCommand(commands, Upgrade), "sudo snap refresh"));
+    assert_int_equal(0, strcmp(getCommand(commands, Which), "which snap"));
 }

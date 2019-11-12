@@ -18,12 +18,12 @@ struct PackageManager {
 PackageManager* definePackageManager(const char name[], Commands* commands, bool enabled) {
     PackageManager* manager = (PackageManager*)(malloc(sizeof(PackageManager)));
     strncpy(manager->name, name, NAME_LENGTH);
-    strncpy(manager->cleanCommand, getCleanCommand(commands), COMMAND_LENGTH);
-    strncpy(manager->installCommand, getInstallCommand(commands), COMMAND_LENGTH);
-    strncpy(manager->searchCommand, getSearchCommand(commands), COMMAND_LENGTH);
-    strncpy(manager->searchExactCommand, getSearchExactCommand(commands), COMMAND_LENGTH);
-    strncpy(manager->upgradeCommand, getUpgradeCommand(commands), COMMAND_LENGTH);
-    strncpy(manager->whichCommand, getWhichCommand(commands), COMMAND_LENGTH);
+    strncpy(manager->cleanCommand, getCommand(commands, Clean), COMMAND_LENGTH);
+    strncpy(manager->installCommand, getCommand(commands, Install), COMMAND_LENGTH);
+    strncpy(manager->searchCommand, getCommand(commands, Search), COMMAND_LENGTH);
+    strncpy(manager->searchExactCommand, getCommand(commands, SearchExact), COMMAND_LENGTH);
+    strncpy(manager->upgradeCommand, getCommand(commands, Upgrade), COMMAND_LENGTH);
+    strncpy(manager->whichCommand, getCommand(commands, Which), COMMAND_LENGTH);
     manager->enabled = enabled;
 
     return manager;
@@ -65,7 +65,7 @@ char* getPackageManagerWhichCommand(PackageManager* manager) {
 }
 
 void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands) {
-    strncpy(manager->installCommand, getInstallCommand(commands), COMMAND_LENGTH);
+    strncpy(manager->installCommand, getCommand(commands, Install), COMMAND_LENGTH);
 }
 
 bool isPackageManagerEnabled(PackageManager* manager) {

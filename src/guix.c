@@ -11,12 +11,12 @@ Commands* getGuixCommands(char* target) {
     snprintf(searchExactCommand, COMMAND_LENGTH, "guix package -A ^%s$", target);
 
     Commands* commands = commands_new();
-    setCleanCommand(commands, "guix package --delete-generations; guix gc --collect-garbage; guix gc --list-dead");
-    setInstallCommand(commands, installCommand);
-    setSearchCommand(commands, searchCommand);
-    setSearchExactCommand(commands, searchExactCommand);
-    setUpgradeCommand(commands, "guix pull; guix package -u");
-    setWhichCommand(commands, "which guix");
+    setCommand(commands, Clean, "guix package --delete-generations; guix gc --collect-garbage; guix gc --list-dead");
+    setCommand(commands, Install, installCommand);
+    setCommand(commands, Search, searchCommand);
+    setCommand(commands, SearchExact, searchExactCommand);
+    setCommand(commands, Upgrade, "guix pull; guix package -u");
+    setCommand(commands, Which, "which guix");
 
     return commands;
 }

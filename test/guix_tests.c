@@ -9,10 +9,10 @@
 static void guix_commands_should_be_correct(void **state) {
     (void) state; /* unused */
     Commands* commands = getGuixCommands("emacs");
-    assert_int_equal(0, strcmp(getCleanCommand(commands), "guix package --delete-generations; guix gc --collect-garbage; guix gc --list-dead"));
-    assert_int_equal(0, strcmp(getInstallCommand(commands), "guix install emacs"));
-    assert_int_equal(0, strcmp(getSearchCommand(commands), "guix package -A emacs"));
-    assert_int_equal(0, strcmp(getSearchExactCommand(commands), "guix package -A ^emacs$"));
-    assert_int_equal(0, strcmp(getUpgradeCommand(commands), "guix pull; guix package -u"));
-    assert_int_equal(0, strcmp(getWhichCommand(commands), "which guix"));
+    assert_int_equal(0, strcmp(getCommand(commands, Clean), "guix package --delete-generations; guix gc --collect-garbage; guix gc --list-dead"));
+    assert_int_equal(0, strcmp(getCommand(commands, Install), "guix install emacs"));
+    assert_int_equal(0, strcmp(getCommand(commands, Search), "guix package -A emacs"));
+    assert_int_equal(0, strcmp(getCommand(commands, SearchExact), "guix package -A ^emacs$"));
+    assert_int_equal(0, strcmp(getCommand(commands, Upgrade), "guix pull; guix package -u"));
+    assert_int_equal(0, strcmp(getCommand(commands, Which), "which guix"));
 }

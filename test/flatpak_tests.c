@@ -9,10 +9,10 @@
 static void flatpak_commands_should_be_correct(void **state) {
     (void) state; /* unused */
     Commands* commands = getFlatpakCommands("emacs");
-    assert_int_equal(0, strcmp(getCleanCommand(commands), "flatpak uninstall --unused"));
-    assert_int_equal(0, strcmp(getInstallCommand(commands), "flatpak install emacs"));
-    assert_int_equal(0, strcmp(getSearchCommand(commands), "flatpak search emacs"));
-    assert_int_equal(0, strcmp(getSearchExactCommand(commands), "flatpak search emacs"));
-    assert_int_equal(0, strcmp(getUpgradeCommand(commands), "flatpak update"));
-    assert_int_equal(0, strcmp(getWhichCommand(commands), "which flatpak"));
+    assert_int_equal(0, strcmp(getCommand(commands, Clean), "flatpak uninstall --unused"));
+    assert_int_equal(0, strcmp(getCommand(commands, Install), "flatpak install emacs"));
+    assert_int_equal(0, strcmp(getCommand(commands, Search), "flatpak search emacs"));
+    assert_int_equal(0, strcmp(getCommand(commands, SearchExact), "flatpak search emacs"));
+    assert_int_equal(0, strcmp(getCommand(commands, Upgrade), "flatpak update"));
+    assert_int_equal(0, strcmp(getCommand(commands, Which), "which flatpak"));
 }
