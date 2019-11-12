@@ -35,7 +35,7 @@ char* getPackageManagerCommand(PackageManager* manager, enum Action action) {
 }
 
 void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands) {
-    setCommand(manager->commands, Install, getCommandString(commands, Install));
+    setCommandString(manager->commands, Install, getCommandString(commands, Install));
 }
 
 bool isPackageManagerEnabled(PackageManager* manager) {

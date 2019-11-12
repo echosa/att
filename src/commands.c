@@ -17,7 +17,7 @@ Commands* commands_new() {
     return commands;
 }
 
-void setCommand(Commands *commands, enum Action action, char* command) {
+void setCommandString(Commands *commands, enum Action action, char* command) {
     if (action == Clean) {
         strncpy(commands->clean, command, COMMAND_LENGTH);
     } else if (action == Install) {

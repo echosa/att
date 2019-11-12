@@ -11,12 +11,12 @@ Commands* getFlatpakCommands(char* target) {
     snprintf(searchExactCommand, COMMAND_LENGTH, "flatpak search %s", target);
 
     Commands* commands = commands_new();
-    setCommand(commands, Clean, "flatpak uninstall --unused");
-    setCommand(commands, Install, installCommand);
-    setCommand(commands, Search, searchCommand);
-    setCommand(commands, SearchExact, searchExactCommand);
-    setCommand(commands, Upgrade, "flatpak update");
-    setCommand(commands, Which, "which flatpak");
+    setCommandString(commands, Clean, "flatpak uninstall --unused");
+    setCommandString(commands, Install, installCommand);
+    setCommandString(commands, Search, searchCommand);
+    setCommandString(commands, SearchExact, searchExactCommand);
+    setCommandString(commands, Upgrade, "flatpak update");
+    setCommandString(commands, Which, "which flatpak");
 
     return commands;
 }

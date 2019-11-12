@@ -11,12 +11,12 @@ Commands* getAptCommands(char* target) {
     snprintf(searchExactCommand, COMMAND_LENGTH, "apt search ^%s$", target);
 
     Commands* commands = commands_new();
-    setCommand(commands, Clean, "sudo apt autoremove");
-    setCommand(commands, Install, installCommand);
-    setCommand(commands, Search, searchCommand);
-    setCommand(commands, SearchExact, searchExactCommand);
-    setCommand(commands, Upgrade, "sudo apt update; sudo apt upgrade");
-    setCommand(commands, Which, "which apt");
+    setCommandString(commands, Clean, "sudo apt autoremove");
+    setCommandString(commands, Install, installCommand);
+    setCommandString(commands, Search, searchCommand);
+    setCommandString(commands, SearchExact, searchExactCommand);
+    setCommandString(commands, Upgrade, "sudo apt update; sudo apt upgrade");
+    setCommandString(commands, Which, "which apt");
 
     return commands;
 }
