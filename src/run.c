@@ -12,23 +12,9 @@
 #include "managers/snap.h"
 #include "package_manager.h"
 
-char* getCommandForAction(PackageManager* manager, RequestedAction* requestedAction) {
-    switch (getRequestedActionAction(requestedAction)) {
-    case Clean:
-        return getPackageManagerCommand(manager, Clean);
-    case Install:
-        return getPackageManagerCommand(manager, Install);
-    case Search:
-        return getPackageManagerCommand(manager, Search);
-    case SearchExact:
-        return getPackageManagerCommand(manager, SearchExact);
-    case Upgrade:
-        return getPackageManagerCommand(manager, Upgrade);
-    case Which:
-        return getPackageManagerCommand(manager, Which);
-    default:
-        return "";
-    }
+char* getCommandForAction(PackageManager* packageManager, RequestedAction* requestedAction) {
+    Commands* commands = getPackageManagerCommands(packageManager);
+    return getCommandString(commands, getRequestedActionAction(requestedAction));
 }
 
 void runCommandString(PackageManager* manager, char* command, bool isDebug) {
@@ -68,7 +54,7 @@ void runPackageSearch(PackageManager* managers[], RequestedAction* requestedActi
         setRequestedActionAction(searchAction, SearchExact);
     } else {
         setRequestedActionAction(searchAction, Search);
-    }        
+    }
     runCommandForAllManagers(managers, searchAction);
     free(searchAction);
 }

@@ -26,18 +26,18 @@ bool isPackageManagerInstalled(PackageManager* manager) {
     return system(installedCheck) == 0;
 }
 
-char* getPackageManagerName(PackageManager* manager) {
-    return manager->name;
+char* getPackageManagerName(PackageManager* packageManager) {
+    return packageManager->name;
 }
 
-char* getPackageManagerCommand(PackageManager* manager, enum Action action) {
-    return getCommandString(manager->commands, action);
+Commands* getPackageManagerCommands(PackageManager* packageManager) {
+    return packageManager->commands;
 }
 
-void setPackageManagerInstallCommand(PackageManager* manager, Commands* commands) {
-    setCommandString(manager->commands, Install, getCommandString(commands, Install));
+void setPackageManagerInstallCommand(PackageManager* packageManager, Commands* commands) {
+    setCommandString(packageManager->commands, Install, getCommandString(commands, Install));
 }
 
-bool isPackageManagerEnabled(PackageManager* manager) {
-    return manager->enabled;
+bool isPackageManagerEnabled(PackageManager* packageManager) {
+    return packageManager->enabled;
 }
