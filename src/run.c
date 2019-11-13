@@ -11,6 +11,7 @@
 #include "managers/guix.h"
 #include "managers/snap.h"
 #include "package_manager.h"
+#include "system.h"
 
 char* getCommandForAction(PackageManager* packageManager, RequestedAction* requestedAction) {
     Commands* commands = getPackageManagerCommands(packageManager);
@@ -42,7 +43,7 @@ void runRequestedActionCommand(PackageManager* packageManager, RequestedAction* 
 
 void runCommandForAllManagers(PackageManager* packageManagers[], RequestedAction* requestedAction) {
     for (int i = 0; i < MANAGERS_COUNT; i++) {
-        if (isPackageManagerEnabled(packageManagers[i]) && isPackageManagerInstalled(packageManagers[i])) {
+        if (isPackageManagerEnabled(packageManagers[i]) && isPackageManagerInstalled(getPackageManagerName(packageManagers[i]))) {
             runRequestedActionCommand(packageManagers[i], requestedAction);
         }
     }

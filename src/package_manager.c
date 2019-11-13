@@ -19,13 +19,6 @@ PackageManager* definePackageManager(const char name[], Commands* commands, bool
     return packageManager;
 }
 
-bool isPackageManagerInstalled(PackageManager* packageManager) {
-    char installedCheck[INSTALL_CHECK_LENGTH];
-    snprintf(installedCheck, INSTALL_CHECK_LENGTH, "which %s > /dev/null", packageManager->name);
-
-    return system(installedCheck) == 0;
-}
-
 char* getPackageManagerName(PackageManager* packageManager) {
     return packageManager->name;
 }

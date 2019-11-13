@@ -12,6 +12,7 @@
 #include "managers/flatpak_tests.c"
 #include "managers/guix_tests.c"
 #include "managers/snap_tests.c"
+#include "system_tests.c"
 
 int __wrap_system(const char *command) {
     check_expected(command);

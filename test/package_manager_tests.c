@@ -37,13 +37,3 @@ static void setting_package_manager_target_should_set_it_correctly(void **state)
     setPackageManagerInstallCommand(packageManager, commands);
     assert_string_equal("other install command", getCommandString(getPackageManagerCommands(packageManager), Install));
 }
-
-static void check_if_package_is_installed_should_work(void **state) {
-    (void) state; /* unused */
-    Commands* commands = commands_new();
-    PackageManager* packageManager = definePackageManager("foo", commands, true);
-
-    expect_string(__wrap_system, command, "which foo > /dev/null");
-    will_return(__wrap_system, 0);
-    isPackageManagerInstalled(packageManager);
-}
