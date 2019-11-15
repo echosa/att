@@ -10,6 +10,15 @@ This project serves as a chance to dust off my C chops, which I've hardly used s
 
 Constructive criticism and tips for improvement are welcome. There's much about C I've forgotten, so I'm sure there are lots of things I can improve. Please share any improvements you find. Thanks!
 
+## Supported Package Managers
+
+`att` will only run for support package managers that you have installed. The current supported package managers are:
+- apt
+- brew
+- flatpak
+- guix
+- snap
+
 ## Installation
 I'm not providing any pre-built binaries at this time. Clone this repository, then run:
 ```
