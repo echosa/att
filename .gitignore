@@ -4,3 +4,4 @@ att
 /nul
 .ccls-cache
 coverage/
+build/
