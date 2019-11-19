@@ -114,3 +114,67 @@ target_link_libraries(att
 target_compile_options(att
   PRIVATE -Wall -Wextra -pedantic -Werror
 )
+
+add_executable(att-debug src/main.c)
+target_include_directories(att-debug PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(att-debug
+  action
+  commands
+  io
+  apt
+  brew
+  flatpak
+  guix
+  snap
+  managers
+  package_manager
+  requested_action
+  run
+  supported_managers
+  system
+)
+target_compile_options(att-debug
+  PRIVATE -Wall -Wextra -pedantic -Werror -g -O0
+)
+
+add_executable(att-tests test/tests.c)
+target_link_libraries(att-tests
+  cmocka
+  action
+  commands
+  io
+  apt
+  brew
+  flatpak
+  guix
+  snap
+  managers
+  package_manager
+  requested_action
+#  run
+  supported_managers
+  system
+)
+target_compile_options(att-tests
+  PRIVATE -Wall -Wextra -pedantic -Werror -Wl,--wrap=system
+)
+
+install(
+  TARGETS att
+  DESTINATION /usr/local/bin
+)
+
+add_custom_target(check
+  cppcheck -i.ccls-cache ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/teste
+)
+
+add_custom_target(uninstall
+  rm /usr/local/bin/att
+)
+
+add_custom_target(coverage
+  COMMAND llvm-cov-9 gcov -f -b *.gcda
+  COMMAND lcov --directory . --base-directory . --gcov-tool ../llvm-gcov.sh --capture -o cov.info
+  COMMAND genhtml cov.info -o coverage
+  COMMAND rm *.gcno *.gcda cov.info
+)
