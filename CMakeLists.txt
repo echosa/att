@@ -151,12 +151,11 @@ target_link_libraries(att-tests
   managers
   package_manager
   requested_action
-#  run
   supported_managers
   system
 )
 target_compile_options(att-tests
-  PRIVATE -Wall -Wextra -pedantic -Werror -Wl,--wrap=system
+  PRIVATE -Wall -Wextra -pedantic -Wl,--wrap=system
 )
 
 install(
