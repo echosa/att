@@ -22,7 +22,9 @@ Constructive criticism and tips for improvement are welcome. There's much about 
 ## Installation
 I'm not providing any pre-built binaries at this time. Clone this repository, then run:
 ```
-$ make
+$ cmake -B build
+$ cd build
+$ make att
 $ sudo make install
 ```
 
@@ -44,9 +46,13 @@ Note: Only package managers that are installed on your system will attempt to ru
 ## Tests
 Code checks can be run if [cppcheck](http://cppcheck.sourceforge.net/) is installed.
 ```
+$ cmake -B build
+$ cd build
 $ make check
 ```
 Tests can be run if [cmocka](https://cmocka.org) is installed.
 ```
+$ cmake -B build
+$ cd build
 $ make test
 ```
