@@ -24,7 +24,7 @@ I'm not providing any pre-built binaries at this time. Clone this repository, th
 ```
 $ cmake -B build
 $ cd build
-$ make
+$ make att
 $ sudo make install
 ```
 

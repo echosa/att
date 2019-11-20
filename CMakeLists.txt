@@ -155,7 +155,10 @@ target_link_libraries(att-tests
   system
 )
 target_compile_options(att-tests
-  PRIVATE -Wall -Wextra -pedantic -Wl,--wrap=system
+  PRIVATE -Wall -Wextra -pedantic
+)
+target_link_options(att-tests
+  PRIVATE -Wl,--wrap=system
 )
 
 install(
